@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">	
+	<xs:element name="containers">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="container" type="container" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="container">
+		<xs:sequence>
+			<xs:element name="applicationTier" type="applicationTier" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="capacity" type="xs:float" use="required"/>
+		<xs:attribute name="maxReserved" type="xs:int" use="required"/>
+		<xs:attribute name="reservedCost" type="xs:float" use="required"/>
+		<xs:attribute name="onDemandCost" type="xs:float" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="applicationTier">
+		<xs:sequence>
+			<xs:element name="functionality" type="functionality" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="initialNumberOfVMs" type="xs:int" use="required"/>
+		<xs:attribute name="id" type="xs:string" use="required"/>
+		<xs:attribute name="responseTimeThreshold" type="xs:float" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="functionality">
+		<xs:attribute name="id" type="xs:string" use="required"/>
+	</xs:complexType>
+</xs:schema>
