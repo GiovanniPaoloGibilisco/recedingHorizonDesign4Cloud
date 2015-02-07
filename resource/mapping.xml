@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<functionality2Tier>
+	<tier id="_J_O-sIGSEeKo6LTSAnjWxg"/>
+	<tier id="_H9DrkIGSEeKo6LTSAnjWxg">
+		<functionality id="_FHrooIGMEeK4MfbIE3-zwQ"/>
+		<functionality id="_FHroo4GMEeK4MfbIE3-zwR"/>
+		<functionality id="_FHroo4GMEeK4MfbIE3-zwS"/>
+	</tier>
+</functionality2Tier>

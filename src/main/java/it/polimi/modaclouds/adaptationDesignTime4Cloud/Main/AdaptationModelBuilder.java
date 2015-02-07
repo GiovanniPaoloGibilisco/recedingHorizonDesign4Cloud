@@ -16,6 +16,9 @@ import it.polimi.modaclouds.resourcemodel.cloud.VirtualHWResourceType;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.SQLException;
 
 import javax.xml.bind.JAXBContext;
@@ -61,6 +64,8 @@ public class AdaptationModelBuilder {
 						tier.getCloudResource().getServiceName(), 
 						tier.getCloudResource().getResourceSizeID());
 				
+				System.out.println(temp.getName());
+				
 				
 				newTier.setId(tier.getId());
 				newTier.setInitialNumberOfVMs(tier.getCloudResource().getReplicas().getReplicaElement().get(0).getValue());
@@ -101,14 +106,14 @@ public class AdaptationModelBuilder {
 			JAXBContext context = JAXBContext.newInstance("it.polimi.modaclouds.adaptationDesignTime4Cloud.model");
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
-			marshaller.marshal(model,System.out);
-		} catch (FileNotFoundException | JAXBException | SAXException e) {
+            OutputStream out = new FileOutputStream( "designAdaptatioModel.xml" );
+			marshaller.marshal(model,out);
+			
+			out.close();
+		} catch ( JAXBException | SAXException | StaticInputBuildingException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (StaticInputBuildingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		
 		
 		return null;
