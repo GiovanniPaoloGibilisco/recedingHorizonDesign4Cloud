@@ -16,7 +16,7 @@ import it.polimi.modaclouds.qos_models.util.XMLHelper;
  * Hello world!
  *
  */
-public class Main 
+public class TestMain 
 {
     public static void main( String[] args )
     {
