@@ -26,6 +26,5 @@
 	</xs:complexType>
 	<xs:complexType name="functionality">
 		<xs:attribute name="id" type="xs:string" use="required"/>
-		<xs:attribute name="name" type="xs:string" use="required"/>
 	</xs:complexType>
 </xs:schema>

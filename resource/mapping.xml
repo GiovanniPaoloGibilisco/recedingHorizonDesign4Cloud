@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <functionality2Tier>
-	<tier id="_J_O-sIGSEeKo6LTSAnjWxg"/>
+	<tier id="_J_O-sIGSEeKo6LTSAnjWxg+">
+		<functionality id="test"/>
+	</tier>
 	<tier id="_H9DrkIGSEeKo6LTSAnjWxg">
 		<functionality id="_FHrooIGMEeK4MfbIE3-zwQ"/>
 		<functionality id="_FHroo4GMEeK4MfbIE3-zwR"/>

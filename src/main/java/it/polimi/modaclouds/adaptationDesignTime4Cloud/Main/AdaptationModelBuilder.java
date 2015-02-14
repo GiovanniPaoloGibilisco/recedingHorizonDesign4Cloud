@@ -5,6 +5,7 @@ import it.polimi.modaclouds.adaptationDesignTime4Cloud.exceptions.StaticInputBui
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ApplicationTier;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Container;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Containers;
+import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Functionality;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ObjectFactory;
 import it.polimi.modaclouds.qos_models.schema.ResourceContainer;
 import it.polimi.modaclouds.qos_models.schema.ResourceModelExtension;
@@ -20,13 +21,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.eclipse.emf.common.util.EList;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+
+import Util.GenericXMLHelper;
 
 
 
@@ -47,13 +52,20 @@ public class AdaptationModelBuilder {
 	public AdaptationDesignResult createAdaptationModelAndRules(String space4cloudSolutionPath, String functionalityToTierPath, String space4cloudPerformancePath){
 
 		ObjectFactory factory= new ObjectFactory();
+		 
+		GenericXMLHelper xmlHelp= new GenericXMLHelper(functionalityToTierPath);
+		List<Element> mapping=xmlHelp.getElements("tier");
+
 				
 		Containers model=factory.createContainers();
+		
+
 		
 		try {
 			ResourceModelExtension solution = (ResourceModelExtension) XMLHelper
 					.deserialize(new FileInputStream(space4cloudSolutionPath),
 							ResourceModelExtension.class);
+			
 
 			for (ResourceContainer tier : solution.getResourceContainer()) {
 				
@@ -62,19 +74,30 @@ public class AdaptationModelBuilder {
 				
 				CloudResource temp=this.dbHandler.getCloudResource(tier.getProvider(), 
 						tier.getCloudResource().getServiceName(), 
-						tier.getCloudResource().getResourceSizeID());
-				
-				System.out.println(temp.getName());
-				
+						tier.getCloudResource().getResourceSizeID());				
 				
 				newTier.setId(tier.getId());
-				newTier.setInitialNumberOfVMs(tier.getCloudResource().getReplicas().getReplicaElement().get(0).getValue());
+				newTier.setInitialNumberOfVMs(tier.getCloudResource().getReplicas().getReplicaElement().get(0).getValue());	
 				newTier.setResponseTimeThreshold(0);
 				
-				float capacity= this.getResourceCapacity(temp, 1200);
+				
+			
+				for(Element e: mapping){
+					if(e.getAttribute("id").equals(newTier.getId())){
+						List<Element> functionalities=xmlHelp.getElements(e, "functionality");
+						for(Element f : functionalities){
+							Functionality toAdd=new Functionality();
+							toAdd.setId(f.getAttribute("id"));
+							
+							newTier.getFunctionality().add(toAdd);
+						}
+					}
+				}
 				
 				boolean existingContainer=false;
 				Container toUpdate=null;
+				
+				float capacity= this.getResourceCapacity(temp, 1200);
 				
 				for(Container c: model.getContainer()){
 					if(c.getCapacity()==capacity){
@@ -96,10 +119,12 @@ public class AdaptationModelBuilder {
 				else{
 					toUpdate.getApplicationTier().add(newTier);
 				}
-					
+				
+				
 
 				
 				
+					
 					
 			}
 			
@@ -156,8 +181,9 @@ public class AdaptationModelBuilder {
 			// del costo può essere effettuata in una singola
 			// chiamata all esterno
 			//this.getResource().getRegion()
+			
 			if (c.getRegion().equals(region) && c.getDescription().contains("On-Demand")) {
-									
+					
 					if (toReturn == 0)
 						toReturn=(float) c.getValue();
 					else if (c.getValue() < toReturn)
