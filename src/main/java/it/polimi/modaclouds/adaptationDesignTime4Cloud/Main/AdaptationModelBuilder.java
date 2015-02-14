@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -55,6 +56,8 @@ public class AdaptationModelBuilder {
 		 
 		GenericXMLHelper xmlHelp= new GenericXMLHelper(functionalityToTierPath);
 		List<Element> mapping=xmlHelp.getElements("tier");
+		xmlHelp= new GenericXMLHelper(space4cloudPerformancePath);
+		List<Element> performance=xmlHelp.getElements("Seff");
 
 				
 		Containers model=factory.createContainers();
@@ -72,7 +75,7 @@ public class AdaptationModelBuilder {
 				
 				ApplicationTier newTier = factory.createApplicationTier();
 				
-				CloudResource temp=this.dbHandler.getCloudResource(tier.getProvider(), 
+				CloudResource resource=this.dbHandler.getCloudResource(tier.getProvider(), 
 						tier.getCloudResource().getServiceName(), 
 						tier.getCloudResource().getResourceSizeID());				
 				
@@ -94,10 +97,70 @@ public class AdaptationModelBuilder {
 					}
 				}
 				
+				List<float[]> allWeigthedRT= new ArrayList<float[]>();
+				List<float[]> allTHR=new ArrayList<float[]>();
+				
+				for(Element e: performance){
+					for(Functionality f: newTier.getFunctionality()){
+						if(e.getAttribute("id").equals(f.getId())){
+							float[] weigthedResponseTime=new float[24];
+							float[] throughput=new float[24];
+							
+							List<Element> thr=xmlHelp.getElements(e, "throughput");
+							
+							for(Element t: thr){
+								throughput[Integer.parseInt(t.getAttribute("hour"))]=Float.parseFloat(t.getAttribute("value"));
+							}
+							
+							List<Element> rt=xmlHelp.getElements(e, "avgRT");
+							
+							for(Element r: rt){
+								weigthedResponseTime[Integer.parseInt(r.getAttribute("hour"))]=Float.parseFloat(r.getAttribute("value"));
+							}
+
+							for(int i=0; i<24; i++){
+								weigthedResponseTime[i]=weigthedResponseTime[i]*throughput[i];
+							}
+							
+							allWeigthedRT.add(weigthedResponseTime);
+							allTHR.add(throughput);
+						}
+
+					}
+				}
+				
+				float[] thresholds=new float[24];
+				
+				for(int i=0; i<24 ; i++){
+					
+					float num=0;
+					
+					for(float[] temp: allWeigthedRT){
+						num=num+temp[i];
+					}
+					
+					float den=0;
+					
+					for(float[] temp: allTHR){
+						den=den+temp[i];
+					}
+					
+					thresholds[i]=num/den;
+					
+				}
+				
+				for(int i=0; i<24; i++){
+					System.out.println(thresholds[i]);
+				}
+				
+				
+				
 				boolean existingContainer=false;
 				Container toUpdate=null;
 				
-				float capacity= this.getResourceCapacity(temp, 1200);
+				
+				//does the control between container be based just on the capacity?? (region...)
+				float capacity= this.getResourceCapacity(resource, 1200);
 				
 				for(Container c: model.getContainer()){
 					if(c.getCapacity()==capacity){
@@ -111,8 +174,8 @@ public class AdaptationModelBuilder {
 					Container toAdd= factory.createContainer();
 					toAdd.setCapacity(capacity);
 					toAdd.setMaxReserved(0);
-					toAdd.setOnDemandCost(this.getResourceOnDemandCost(temp, tier.getCloudResource().getLocation().getRegion()));
-					toAdd.setReservedCost(this.getResourceReservedCost(temp, tier.getCloudResource().getLocation().getRegion()));
+					toAdd.setOnDemandCost(this.getResourceOnDemandCost(resource, tier.getCloudResource().getLocation().getRegion()));
+					toAdd.setReservedCost(this.getResourceReservedCost(resource, tier.getCloudResource().getLocation().getRegion()));
 					toAdd.getApplicationTier().add(newTier);
 					model.getContainer().add(toAdd);
 				}
