@@ -2,30 +2,30 @@
 <performance xmlns="http://www.modaclouds.eu/xsd/2014/11/performances" solutionID="688939606">
     <Seffs>
         <Seff id="_FHrooIGMEeK4MfbIE3-zwQ" name="register">
-            <throughput hour="0" value="0.0"/>
-            <throughput hour="1" value="0.0"/>
-            <throughput hour="2" value="0.0"/>
-            <throughput hour="3" value="0.0"/>
-            <throughput hour="4" value="0.0"/>
-            <throughput hour="5" value="0.0"/>
-            <throughput hour="6" value="0.0"/>
-            <throughput hour="7" value="0.0"/>
-            <throughput hour="8" value="0.0"/>
-            <throughput hour="9" value="0.0"/>
-            <throughput hour="10" value="0.0"/>
-            <throughput hour="11" value="0.0"/>
-            <throughput hour="12" value="0.0"/>
-            <throughput hour="13" value="0.0"/>
-            <throughput hour="14" value="0.0"/>
-            <throughput hour="15" value="0.0"/>
-            <throughput hour="16" value="0.0"/>
-            <throughput hour="17" value="0.0"/>
-            <throughput hour="18" value="0.0"/>
-            <throughput hour="19" value="0.0"/>
-            <throughput hour="20" value="0.0"/>
-            <throughput hour="21" value="0.0"/>
-            <throughput hour="22" value="0.0"/>
-            <throughput hour="23" value="0.0"/>
+            <throughput hour="0" value="1.0"/>
+            <throughput hour="1" value="1.0"/>
+            <throughput hour="2" value="1.0"/>
+            <throughput hour="3" value="1.0"/>
+            <throughput hour="4" value="1.0"/>
+            <throughput hour="5" value="1.0"/>
+            <throughput hour="6" value="1.0"/>
+            <throughput hour="7" value="1.0"/>
+            <throughput hour="8" value="1.0"/>
+            <throughput hour="9" value="1.0"/>
+            <throughput hour="10" value="1.0"/>
+            <throughput hour="11" value="1.0"/>
+            <throughput hour="12" value="1.0"/>
+            <throughput hour="13" value="1.0"/>
+            <throughput hour="14" value="1.0"/>
+            <throughput hour="15" value="1.0"/>
+            <throughput hour="16" value="1.0"/>
+            <throughput hour="17" value="1.0"/>
+            <throughput hour="18" value="1.0"/>
+            <throughput hour="19" value="1.0"/>
+            <throughput hour="20" value="1.0"/>
+            <throughput hour="21" value="1.0"/>
+            <throughput hour="22" value="1.0"/>
+            <throughput hour="23" value="1.0"/>
             <avgRT hour="0" value="0.07156448"/>
             <avgRT hour="1" value="0.07156448"/>
             <avgRT hour="2" value="0.07156448"/>
@@ -52,30 +52,30 @@
             <avgRT hour="23" value="0.07156448"/>
         </Seff>
         <Seff id="_FHroo4GMEeK4MfbIE3-zwR" name="saveAnswers">
-            <throughput hour="0" value="0.0"/>
-            <throughput hour="1" value="0.0"/>
-            <throughput hour="2" value="0.0"/>
-            <throughput hour="3" value="0.0"/>
-            <throughput hour="4" value="0.0"/>
-            <throughput hour="5" value="0.0"/>
-            <throughput hour="6" value="0.0"/>
-            <throughput hour="7" value="0.0"/>
-            <throughput hour="8" value="0.0"/>
-            <throughput hour="9" value="0.0"/>
-            <throughput hour="10" value="0.0"/>
-            <throughput hour="11" value="0.0"/>
-            <throughput hour="12" value="0.0"/>
-            <throughput hour="13" value="0.0"/>
-            <throughput hour="14" value="0.0"/>
-            <throughput hour="15" value="0.0"/>
-            <throughput hour="16" value="0.0"/>
-            <throughput hour="17" value="0.0"/>
-            <throughput hour="18" value="0.0"/>
-            <throughput hour="19" value="0.0"/>
-            <throughput hour="20" value="0.0"/>
-            <throughput hour="21" value="0.0"/>
-            <throughput hour="22" value="0.0"/>
-            <throughput hour="23" value="0.0"/>
+            <throughput hour="0" value="1.0"/>
+            <throughput hour="1" value="1.0"/>
+            <throughput hour="2" value="1.0"/>
+            <throughput hour="3" value="1.0"/>
+            <throughput hour="4" value="1.0"/>
+            <throughput hour="5" value="1.0"/>
+            <throughput hour="6" value="1.0"/>
+            <throughput hour="7" value="1.0"/>
+            <throughput hour="8" value="1.0"/>
+            <throughput hour="9" value="1.0"/>
+            <throughput hour="10" value="1.0"/>
+            <throughput hour="11" value="1.0"/>
+            <throughput hour="12" value="1.0"/>
+            <throughput hour="13" value="1.0"/>
+            <throughput hour="14" value="1.0"/>
+            <throughput hour="15" value="1.0"/>
+            <throughput hour="16" value="1.0"/>
+            <throughput hour="17" value="1.0"/>
+            <throughput hour="18" value="1.0"/>
+            <throughput hour="19" value="1.0"/>
+            <throughput hour="20" value="1.0"/>
+            <throughput hour="21" value="1.0"/>
+            <throughput hour="22" value="1.0"/>
+            <throughput hour="23" value="1.0"/>
             <avgRT hour="0" value="-1.0"/>
             <avgRT hour="1" value="-1.0"/>
             <avgRT hour="2" value="-1.0"/>
@@ -102,30 +102,30 @@
             <avgRT hour="23" value="-1.0"/>
         </Seff>
         <Seff id="_FHropoGMEeK4MfbIE3-zwS" name="answerQuestions">
-            <throughput hour="0" value="0.0"/>
-            <throughput hour="1" value="0.0"/>
-            <throughput hour="2" value="0.0"/>
-            <throughput hour="3" value="0.0"/>
-            <throughput hour="4" value="0.0"/>
-            <throughput hour="5" value="0.0"/>
-            <throughput hour="6" value="0.0"/>
-            <throughput hour="7" value="0.0"/>
-            <throughput hour="8" value="0.0"/>
-            <throughput hour="9" value="0.0"/>
-            <throughput hour="10" value="0.0"/>
-            <throughput hour="11" value="0.0"/>
-            <throughput hour="12" value="0.0"/>
-            <throughput hour="13" value="0.0"/>
-            <throughput hour="14" value="0.0"/>
-            <throughput hour="15" value="0.0"/>
-            <throughput hour="16" value="0.0"/>
-            <throughput hour="17" value="0.0"/>
-            <throughput hour="18" value="0.0"/>
-            <throughput hour="19" value="0.0"/>
-            <throughput hour="20" value="0.0"/>
-            <throughput hour="21" value="0.0"/>
-            <throughput hour="22" value="0.0"/>
-            <throughput hour="23" value="0.0"/>
+            <throughput hour="0" value="1.0"/>
+            <throughput hour="1" value="1.0"/>
+            <throughput hour="2" value="1.0"/>
+            <throughput hour="3" value="1.0"/>
+            <throughput hour="4" value="1.0"/>
+            <throughput hour="5" value="1.0"/>
+            <throughput hour="6" value="1.0"/>
+            <throughput hour="7" value="1.0"/>
+            <throughput hour="8" value="1.0"/>
+            <throughput hour="9" value="1.0"/>
+            <throughput hour="10" value="1.0"/>
+            <throughput hour="11" value="1.0"/>
+            <throughput hour="12" value="1.0"/>
+            <throughput hour="13" value="1.0"/>
+            <throughput hour="14" value="1.0"/>
+            <throughput hour="15" value="1.0"/>
+            <throughput hour="16" value="1.0"/>
+            <throughput hour="17" value="1.0"/>
+            <throughput hour="18" value="1.0"/>
+            <throughput hour="19" value="1.0"/>
+            <throughput hour="20" value="1.0"/>
+            <throughput hour="21" value="1.0"/>
+            <throughput hour="22" value="1.0"/>
+            <throughput hour="23" value="1.0"/>
             <avgRT hour="0" value="0.17310737"/>
             <avgRT hour="1" value="0.17310737"/>
             <avgRT hour="2" value="0.17310737"/>

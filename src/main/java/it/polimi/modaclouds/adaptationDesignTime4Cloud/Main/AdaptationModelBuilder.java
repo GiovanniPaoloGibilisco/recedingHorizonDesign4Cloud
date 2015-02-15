@@ -7,6 +7,8 @@ import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Container;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Containers;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Functionality;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ObjectFactory;
+import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ResponseTimeThreshold;
+import it.polimi.modaclouds.adaptationDesignTime4Cloud.util.GenericXMLHelper;
 import it.polimi.modaclouds.qos_models.schema.ResourceContainer;
 import it.polimi.modaclouds.qos_models.schema.ResourceModelExtension;
 import it.polimi.modaclouds.qos_models.util.XMLHelper;
@@ -31,8 +33,6 @@ import javax.xml.bind.Marshaller;
 import org.eclipse.emf.common.util.EList;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
-
-import Util.GenericXMLHelper;
 
 
 
@@ -81,7 +81,6 @@ public class AdaptationModelBuilder {
 				
 				newTier.setId(tier.getId());
 				newTier.setInitialNumberOfVMs(tier.getCloudResource().getReplicas().getReplicaElement().get(0).getValue());	
-				newTier.setResponseTimeThreshold(0);
 				
 				
 			
@@ -147,11 +146,14 @@ public class AdaptationModelBuilder {
 					
 					thresholds[i]=num/den;
 					
+					ResponseTimeThreshold toAdd=new ResponseTimeThreshold();
+					toAdd.setHour(i);
+					toAdd.setValue(num/den);
+					newTier.getResponseTimeThreshold().add(toAdd);
+					
 				}
 				
-				for(int i=0; i<24; i++){
-					System.out.println(thresholds[i]);
-				}
+
 				
 				
 				
@@ -194,7 +196,7 @@ public class AdaptationModelBuilder {
 			JAXBContext context = JAXBContext.newInstance("it.polimi.modaclouds.adaptationDesignTime4Cloud.model");
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
-            OutputStream out = new FileOutputStream( "designAdaptatioModel.xml" );
+            OutputStream out = new FileOutputStream( "outputModelExample.xml" );
 			marshaller.marshal(model,out);
 			
 			out.close();

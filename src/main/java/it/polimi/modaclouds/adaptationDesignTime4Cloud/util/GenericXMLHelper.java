@@ -1,4 +1,4 @@
-package Util;
+package it.polimi.modaclouds.adaptationDesignTime4Cloud.util;
 
 import java.io.File;
 import java.util.ArrayList;
