@@ -54,10 +54,12 @@ public class AdaptationModelBuilder {
 
 		ObjectFactory factory= new ObjectFactory();
 		 
+		AdaptationDesignResult output=new AdaptationDesignResult();
 		GenericXMLHelper xmlHelp= new GenericXMLHelper(functionalityToTierPath);
 		List<Element> mapping=xmlHelp.getElements("tier");
 		xmlHelp= new GenericXMLHelper(space4cloudPerformancePath);
 		List<Element> performance=xmlHelp.getElements("Seff");
+		MonitoringRulesHelper rulesHelper= new MonitoringRulesHelper();
 
 				
 		Containers model=factory.createContainers();
@@ -198,6 +200,13 @@ public class AdaptationModelBuilder {
 			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
             OutputStream out = new FileOutputStream( "outputModelExample.xml" );
 			marshaller.marshal(model,out);
+			
+			
+			context=JAXBContext.newInstance("it.polimi.modaclouds.qos_models.schema");
+			marshaller=context.createMarshaller();
+			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
+            out = new FileOutputStream( "rules.xml" );
+			marshaller.marshal(rulesHelper.createResponseTimeThresholdRules(model),out);			
 			
 			out.close();
 		} catch ( JAXBException | SAXException | StaticInputBuildingException | IOException e) {
