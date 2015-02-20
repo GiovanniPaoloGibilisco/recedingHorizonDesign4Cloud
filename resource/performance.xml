@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <performance xmlns="http://www.modaclouds.eu/xsd/2014/11/performances" solutionID="688939606">
     <Seffs>
-        <Seff id="_FHrooIGMEeK4MfbIE3-zwQ" name="register">
+        <Seff id="mic-frontend-mon-register" name="register">
             <throughput hour="0" value="1.0"/>
             <throughput hour="1" value="1.0"/>
             <throughput hour="2" value="1.0"/>
@@ -51,7 +51,7 @@
             <avgRT hour="22" value="0.07156448"/>
             <avgRT hour="23" value="0.07156448"/>
         </Seff>
-        <Seff id="_FHroo4GMEeK4MfbIE3-zwR" name="saveAnswers">
+        <Seff id="mic-frontend-mon-saveAnswers" name="saveAnswers">
             <throughput hour="0" value="1.0"/>
             <throughput hour="1" value="1.0"/>
             <throughput hour="2" value="1.0"/>
@@ -101,7 +101,7 @@
             <avgRT hour="22" value="-1.0"/>
             <avgRT hour="23" value="-1.0"/>
         </Seff>
-        <Seff id="_FHropoGMEeK4MfbIE3-zwS" name="answerQuestions">
+        <Seff id="mic-frontend-mon-answerQuestions" name="answerQuestions">
             <throughput hour="0" value="1.0"/>
             <throughput hour="1" value="1.0"/>
             <throughput hour="2" value="1.0"/>
@@ -153,7 +153,7 @@
         </Seff>
     </Seffs>
     <Tiers>
-        <Tier id="_H9DrkIGSEeKo6LTSAnjWxg" name="MiCfrontend">
+        <Tier id="MIC" name="MiCfrontend">
             <utilization hour="0" value="1.0"/>
             <utilization hour="1" value="1.0"/>
             <utilization hour="2" value="1.0"/>
@@ -178,32 +178,6 @@
             <utilization hour="21" value="1.0"/>
             <utilization hour="22" value="1.0"/>
             <utilization hour="23" value="1.0"/>
-        </Tier>
-        <Tier id="_J_O-sIGSEeKo6LTSAnjWxg" name="MiCbackend">
-            <utilization hour="0" value="100.0"/>
-            <utilization hour="1" value="100.0"/>
-            <utilization hour="2" value="100.0"/>
-            <utilization hour="3" value="100.0"/>
-            <utilization hour="4" value="100.0"/>
-            <utilization hour="5" value="100.0"/>
-            <utilization hour="6" value="100.0"/>
-            <utilization hour="7" value="100.0"/>
-            <utilization hour="8" value="100.0"/>
-            <utilization hour="9" value="100.0"/>
-            <utilization hour="10" value="100.0"/>
-            <utilization hour="11" value="100.0"/>
-            <utilization hour="12" value="100.0"/>
-            <utilization hour="13" value="100.0"/>
-            <utilization hour="14" value="100.0"/>
-            <utilization hour="15" value="100.0"/>
-            <utilization hour="16" value="100.0"/>
-            <utilization hour="17" value="100.0"/>
-            <utilization hour="18" value="100.0"/>
-            <utilization hour="19" value="100.0"/>
-            <utilization hour="20" value="100.0"/>
-            <utilization hour="21" value="100.0"/>
-            <utilization hour="22" value="100.0"/>
-            <utilization hour="23" value="100.0"/>
         </Tier>
     </Tiers>
 </performance>

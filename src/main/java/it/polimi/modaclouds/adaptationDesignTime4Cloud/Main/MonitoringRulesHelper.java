@@ -1,18 +1,16 @@
 package it.polimi.modaclouds.adaptationDesignTime4Cloud.Main;
 
-import java.util.List;
 
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ApplicationTier;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Container;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Containers;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Functionality;
-import it.polimi.modaclouds.qos_models.schema.MonitoredTargets;
+import it.polimi.modaclouds.qos_models.schema.Condition;
 import it.polimi.modaclouds.qos_models.schema.MonitoringRule;
 import it.polimi.modaclouds.qos_models.schema.MonitoringRules;
 import it.polimi.modaclouds.qos_models.schema.CollectedMetric;
 import it.polimi.modaclouds.qos_models.schema.MonitoredTarget;
 import it.polimi.modaclouds.qos_models.schema.Action;
-import it.polimi.modaclouds.qos_models.schema.AggregateFunction;
 import it.polimi.modaclouds.qos_models.schema.MonitoringMetricAggregation;
 import it.polimi.modaclouds.qos_models.schema.Parameter;
 import it.polimi.modaclouds.qos_models.schema.ObjectFactory;
@@ -33,6 +31,7 @@ public class MonitoringRulesHelper {
 		MonitoredTarget target;
 		Action action;
 		CollectedMetric collectedMetric;
+		Condition condition;
 		MonitoringMetricAggregation aggregation;
 		Parameter tempParam;
 		
@@ -47,11 +46,11 @@ public class MonitoringRulesHelper {
 					rule= factory.createMonitoringRule();
 					rule.setMonitoredTargets(factory.createMonitoredTargets());
 					rule.setId("respTimeThreshold_"+t.getId());
-					rule.setTimeStep("3600");
-					rule.setTimeWindow("3600");
+					rule.setTimeStep("300");
+					rule.setTimeWindow("300");
 					
 					for(Functionality f: t.getFunctionality()){
-						target= new MonitoredTarget();
+						target=factory.createMonitoredTarget();
 						target.setClazz("method");
 						target.setType(f.getId());
 						
@@ -72,6 +71,13 @@ public class MonitoringRulesHelper {
 					aggregation.setGroupingClass("Method");
 					
 					rule.setMetricAggregation(aggregation);
+					
+					
+					condition=factory.createCondition();
+
+					condition.setValue("METRIC &gt; "+t.getResponseTimeThreshold().get(0).getValue());
+					
+					rule.setCondition(condition);
 					
 					action=factory.createAction();
 					action.setName("OutputMetric");

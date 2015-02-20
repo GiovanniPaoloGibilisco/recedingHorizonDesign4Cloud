@@ -206,7 +206,7 @@ public class AdaptationModelBuilder {
 			marshaller=context.createMarshaller();
 			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
             out = new FileOutputStream( "rules.xml" );
-			marshaller.marshal(rulesHelper.createResponseTimeThresholdRules(model),out);			
+			marshaller.marshal(rulesHelper.createResponseTimeThresholdRules(model),out);	
 			
 			out.close();
 		} catch ( JAXBException | SAXException | StaticInputBuildingException | IOException e) {
