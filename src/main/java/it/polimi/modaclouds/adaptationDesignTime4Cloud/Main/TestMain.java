@@ -26,7 +26,8 @@ public class TestMain
     	AdaptationModelBuilder builder= new AdaptationModelBuilder();
     	builder.createAdaptationModelAndRules("/home/mik/workspace/adaptationDesignTime4Cloud/resource/solution.xml",
     			"/home/mik/workspace/adaptationDesignTime4Cloud/resource/mapping.xml", 
-    			"/home/mik/workspace/adaptationDesignTime4Cloud/resource/performance.xml");
+    			"/home/mik/workspace/adaptationDesignTime4Cloud/resource/performance.xml",
+    			args[0]);
     	
     }
 }

@@ -34,9 +34,6 @@ import org.eclipse.emf.common.util.EList;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-
-
-
 public class AdaptationModelBuilder {
 	
 	
@@ -50,31 +47,27 @@ public class AdaptationModelBuilder {
 		}
 	}
 	
-	public AdaptationDesignResult createAdaptationModelAndRules(String space4cloudSolutionPath, String functionalityToTierPath, String space4cloudPerformancePath){
+	public AdaptationDesignResult createAdaptationModelAndRules(String space4cloudSolutionPath, String functionalityToTierPath, 
+																String space4cloudPerformancePath, String adaptationType ){
 
 		ObjectFactory factory= new ObjectFactory();
-		 
+		 	
 		AdaptationDesignResult output=new AdaptationDesignResult();
 		GenericXMLHelper xmlHelp= new GenericXMLHelper(functionalityToTierPath);
 		List<Element> mapping=xmlHelp.getElements("tier");
 		xmlHelp= new GenericXMLHelper(space4cloudPerformancePath);
 		List<Element> performance=xmlHelp.getElements("Seff");
 		MonitoringRulesHelper rulesHelper= new MonitoringRulesHelper();
-
-				
+			
 		Containers model=factory.createContainers();
-		
-
 		
 		try {
 			ResourceModelExtension solution = (ResourceModelExtension) XMLHelper
 					.deserialize(new FileInputStream(space4cloudSolutionPath),
 							ResourceModelExtension.class);
 			
-
 			for (ResourceContainer tier : solution.getResourceContainer()) {
-				
-				
+							
 				ApplicationTier newTier = factory.createApplicationTier();
 				
 				CloudResource resource=this.dbHandler.getCloudResource(tier.getProvider(), 
@@ -83,86 +76,19 @@ public class AdaptationModelBuilder {
 				
 				newTier.setId(tier.getId());
 				newTier.setInitialNumberOfVMs(tier.getCloudResource().getReplicas().getReplicaElement().get(0).getValue());	
-				
-				
-			
-				for(Element e: mapping){
-					if(e.getAttribute("id").equals(newTier.getId())){
-						List<Element> functionalities=xmlHelp.getElements(e, "functionality");
-						for(Element f : functionalities){
-							Functionality toAdd=new Functionality();
-							toAdd.setId(f.getAttribute("id"));
 							
-							newTier.getFunctionality().add(toAdd);
-						}
-					}
+				//the mapping funztionalities2tier is inserted in the file sent to the SAR at runtime only if the 
+				//optimization is performed considering the method as classes
+				if(adaptationType.equals("method")){		
+					this.setMapping(mapping, newTier, xmlHelp);
 				}
 				
-				List<float[]> allWeigthedRT= new ArrayList<float[]>();
-				List<float[]> allTHR=new ArrayList<float[]>();
-				
-				for(Element e: performance){
-					for(Functionality f: newTier.getFunctionality()){
-						if(e.getAttribute("id").equals(f.getId())){
-							float[] weigthedResponseTime=new float[24];
-							float[] throughput=new float[24];
-							
-							List<Element> thr=xmlHelp.getElements(e, "throughput");
-							
-							for(Element t: thr){
-								throughput[Integer.parseInt(t.getAttribute("hour"))]=Float.parseFloat(t.getAttribute("value"));
-							}
-							
-							List<Element> rt=xmlHelp.getElements(e, "avgRT");
-							
-							for(Element r: rt){
-								weigthedResponseTime[Integer.parseInt(r.getAttribute("hour"))]=Float.parseFloat(r.getAttribute("value"));
-							}
-
-							for(int i=0; i<24; i++){
-								weigthedResponseTime[i]=weigthedResponseTime[i]*throughput[i];
-							}
-							
-							allWeigthedRT.add(weigthedResponseTime);
-							allTHR.add(throughput);
-						}
-
-					}
-				}
-				
-				float[] thresholds=new float[24];
-				
-				for(int i=0; i<24 ; i++){
-					
-					float num=0;
-					
-					for(float[] temp: allWeigthedRT){
-						num=num+temp[i];
-					}
-					
-					float den=0;
-					
-					for(float[] temp: allTHR){
-						den=den+temp[i];
-					}
-					
-					thresholds[i]=num/den;
-					
-					ResponseTimeThreshold toAdd=new ResponseTimeThreshold();
-					toAdd.setHour(i);
-					toAdd.setValue(num/den);
-					newTier.getResponseTimeThreshold().add(toAdd);
-					
-				}
-				
-
-				
-				
-				
+				//design response time thresholds will be setted depending on the adaptation type (method or tier)
+				this.setResponseTimeThresholds(adaptationType, performance, newTier, xmlHelp);
+						
 				boolean existingContainer=false;
 				Container toUpdate=null;
-				
-				
+							
 				//does the control between container be based just on the capacity?? (region...)
 				float capacity= this.getResourceCapacity(resource, 1200);
 				
@@ -172,9 +98,9 @@ public class AdaptationModelBuilder {
 						existingContainer=true;
 						toUpdate=c;
 					}
-				}
+				}			
 				
-				if(existingContainer==false){
+				if(!existingContainer){
 					Container toAdd= factory.createContainer();
 					toAdd.setCapacity(capacity);
 					toAdd.setMaxReserved(0);
@@ -185,13 +111,7 @@ public class AdaptationModelBuilder {
 				}
 				else{
 					toUpdate.getApplicationTier().add(newTier);
-				}
-				
-				
-
-				
-				
-					
+				}		
 					
 			}
 			
@@ -218,14 +138,97 @@ public class AdaptationModelBuilder {
 		return null;
 	}
 	
+	
+	private void setMapping(List<Element> mapping, ApplicationTier newTier, GenericXMLHelper xmlHelp){
+		
+		for(Element e: mapping){
+			if(e.getAttribute("id").equals(newTier.getId())){
+				List<Element> functionalities=xmlHelp.getElements(e, "functionality");
+				for(Element f : functionalities){
+					Functionality toAdd=new Functionality();
+					toAdd.setId(f.getAttribute("id"));
+					
+					newTier.getFunctionality().add(toAdd);
+				}
+			}
+		}
+		
+	}
+	
+	//calculating the design response time thresholds for tier or for method
+	private void setResponseTimeThresholds(String adaptationType, List<Element> performance, ApplicationTier newTier, GenericXMLHelper xmlHelp){
+		
+		if(adaptationType.equals("method")){
+			
+		}else if(adaptationType.equals("tier")){
+			
+			List<float[]> allWeigthedRT= new ArrayList<float[]>();
+			List<float[]> allTHR=new ArrayList<float[]>();
+			
+			for(Element e: performance){
+				for(Functionality f: newTier.getFunctionality()){
+					if(e.getAttribute("id").equals(f.getId())){
+						float[] weigthedResponseTime=new float[24];
+						float[] throughput=new float[24];
+						
+						List<Element> thr=xmlHelp.getElements(e, "throughput");
+						
+						for(Element t: thr){
+							throughput[Integer.parseInt(t.getAttribute("hour"))]=Float.parseFloat(t.getAttribute("value"));
+						}
+						
+						List<Element> rt=xmlHelp.getElements(e, "avgRT");
+						
+						for(Element r: rt){
+							weigthedResponseTime[Integer.parseInt(r.getAttribute("hour"))]=Float.parseFloat(r.getAttribute("value"));
+						}
+
+						for(int i=0; i<24; i++){
+							weigthedResponseTime[i]=weigthedResponseTime[i]*throughput[i];
+						}
+						
+						allWeigthedRT.add(weigthedResponseTime);
+						allTHR.add(throughput);
+					}
+
+				}
+			}
+			
+			float[] thresholds=new float[24];
+			
+			for(int i=0; i<24 ; i++){
+				
+				float num=0;
+				
+				for(float[] temp: allWeigthedRT){
+					num=num+temp[i];
+				}
+				
+				float den=0;
+				
+				for(float[] temp: allTHR){
+					den=den+temp[i];
+				}
+				
+				thresholds[i]=num/den;
+				
+				ResponseTimeThreshold toAdd=new ResponseTimeThreshold();
+				toAdd.setHour(i);
+				toAdd.setValue(num/den);
+				newTier.getResponseTimeThreshold().add(toAdd);
+				
+			}
+			
+		}
+		
+	}
+	
 	private float getResourceCapacity(CloudResource resource, float speedNorm) throws StaticInputBuildingException{
 		
 		float toReturn=0;
 		
 		for (VirtualHWResource virtualResource : resource.getComposedOf()) {
 			
-			//il parametro CPU in realtà andrebbe letto da soluzione amazon ovvero è il serviceType che già memorizziamo e che può variare ad esempio storage ecc
-			//per ora teniamo così...
 			if (virtualResource.getType().equals(VirtualHWResourceType.CPU)) {
 
 				toReturn= (float) (virtualResource
@@ -248,14 +251,6 @@ public class AdaptationModelBuilder {
 		
 		for (Cost c : cl) {
 			
-			// di tutte le opzioni per l'ondemand della macchina
-			// individuata ipotizzo di selezionare la più economica
-			// nel caso in cui l'opzione on demand fosse unica non c è
-			// bisogno di questo frammento nel ciclo e l'individuazione
-			// del costo può essere effettuata in una singola
-			// chiamata all esterno
-			//this.getResource().getRegion()
-			
 			if (c.getRegion().equals(region) && c.getDescription().contains("On-Demand")) {
 					
 					if (toReturn == 0)
@@ -276,10 +271,7 @@ public class AdaptationModelBuilder {
 
 		for (Cost c : cl) {
 			if (c.getRegion().equals(region) && c.getDescription().contains("Reserved 3year")) {
-						
-				// di tutte le opzioni per il reserved della macchina
-				// individuata ipotizzo di selezionare la più economica tra
-				// quelle a 3 anni
+
 					if (toReturn == 0)
 						toReturn=(float) c.getValue();
 					

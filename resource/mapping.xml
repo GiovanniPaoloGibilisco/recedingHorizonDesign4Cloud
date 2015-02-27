@@ -1,8 +1,25 @@
 <?xml version="1.0"?>
 <functionality2Tier>
 	<tier id="MIC">
-		<functionality id="mic-frontend-mon-register"/>
-		<functionality id="mic-frontend-mon-answerQuestions"/>
-		<functionality id="mic-frontend-mon-saveAnswers"/>
+		<functionality id="mic-frontend-mon-register">
+			<subFunctionality id="DBregister" probability="0.5" />
+			<subFunctionality id="registerError" probability="0.5" />
+		<functionality/>
+		<functionality id="mic-frontend-mon-saveAnswers">
+			<subFunctionality id="DBsaveAnswers" probability="1" />
+			<subFunctionality id="mic-backend-mon-compute-similarities" probability="1" />
+		<functionality/>		
+		<functionality id="mic-frontend-mon-answerQuestions">
+			<subFunctionality id="DBanswerQuestions" probability="1" />
+		<functionality/>	
+		<functionality id="registerError"/>
+	</tier>
+	<tier id="MICBACKEND">
+		<functionality id="mic-backend-mon-compute-similarities"/>
+	</tier>
+	<tier id="MICDB">
+		<functionality id="DBregister"/>
+		<functionality id="DBsaveAnswers"/>
+		<functionality id="DBanswerQuestions"/>
 	</tier>
 </functionality2Tier>
