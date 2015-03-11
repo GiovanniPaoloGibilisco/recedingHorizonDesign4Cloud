@@ -18,17 +18,20 @@
 	</xs:complexType>
 	<xs:complexType name="applicationTier">
 		<xs:sequence>
-			<xs:element maxOccurs="24" name="responseTimeThreshold" type="responseTimeThreshold"/>		
-			<xs:element maxOccurs="unbounded" name="functionality" type="functionality"/>
+			<xs:element maxOccurs="24" name="responseTimeThreshold">
+				<xs:complexType>
+					<xs:attribute name="hour" type="xs:int" use="required"/>
+					<xs:attribute name="value" type="xs:float" use="required"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element maxOccurs="unbounded" name="Functionality">
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:string" use="required"/>
+				</xs:complexType>
+			</xs:element>		
 		</xs:sequence>	
 		<xs:attribute name="initialNumberOfVMs" type="xs:int" use="required"/>
 		<xs:attribute name="id" type="xs:string" use="required"/>
 	</xs:complexType>
-	<xs:complexType name="functionality">
-		<xs:attribute name="id" type="xs:string" use="required"/>
-	</xs:complexType>
-	<xs:complexType name="responseTimeThreshold">
-		<xs:attribute name="hour" type="xs:int" use="required"/>
-		<xs:attribute name="value" type="xs:float" use="required"/>
-	</xs:complexType>
+	
 </xs:schema>

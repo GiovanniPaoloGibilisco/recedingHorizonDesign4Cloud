@@ -2,8 +2,12 @@ package it.polimi.modaclouds.adaptationDesignTime4Cloud.Main;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.xml.sax.SAXException;
 
@@ -24,10 +28,28 @@ public class TestMain
     	
     	
     	AdaptationModelBuilder builder= new AdaptationModelBuilder();
-    	builder.createAdaptationModelAndRules("/home/mik/workspace/adaptationDesignTime4Cloud/resource/solution.xml",
+    	AdaptationDesignResult output=builder.createAdaptationModelAndRules("/home/mik/workspace/adaptationDesignTime4Cloud/resource/solution.xml",
     			"/home/mik/workspace/adaptationDesignTime4Cloud/resource/mapping.xml", 
     			"/home/mik/workspace/adaptationDesignTime4Cloud/resource/performance.xml",
-    			args[0]);
+    			"tier", 5);
     	
+    	System.out.println(output.getPathToAdaptationModel());
+    	
+    	
+		//print also the rules for testing purpose
+    	JAXBContext context;
+		try {
+			context = JAXBContext.newInstance("it.polimi.modaclouds.qos_models.schema");
+	    	Marshaller marshaller=context.createMarshaller();
+			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
+			OutputStream out = new FileOutputStream( "rules.xml" );
+			marshaller.marshal(output.getResponseTimeThresholdRules(),out);
+
+		} catch (JAXBException | FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		//
     }
 }

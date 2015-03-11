@@ -3,11 +3,11 @@ package it.polimi.modaclouds.adaptationDesignTime4Cloud.Main;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.cloudDBAccess.DataHandler;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.exceptions.StaticInputBuildingException;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ApplicationTier;
+import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ApplicationTier.Functionality;
+import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ApplicationTier.ResponseTimeThreshold;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Container;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Containers;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Functionality;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ObjectFactory;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ResponseTimeThreshold;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.util.GenericXMLHelper;
 import it.polimi.modaclouds.qos_models.schema.ResourceContainer;
 import it.polimi.modaclouds.qos_models.schema.ResourceModelExtension;
@@ -17,11 +17,13 @@ import it.polimi.modaclouds.resourcemodel.cloud.Cost;
 import it.polimi.modaclouds.resourcemodel.cloud.VirtualHWResource;
 import it.polimi.modaclouds.resourcemodel.cloud.VirtualHWResourceType;
 
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,7 @@ public class AdaptationModelBuilder {
 	
 	
 	private DataHandler dbHandler;
+	GenericXMLHelper xmlHelp;
 
 	public AdaptationModelBuilder(){
 		try {
@@ -48,20 +51,26 @@ public class AdaptationModelBuilder {
 	}
 	
 	public AdaptationDesignResult createAdaptationModelAndRules(String space4cloudSolutionPath, String functionalityToTierPath, 
-																String space4cloudPerformancePath, String adaptationType ){
+																String space4cloudPerformancePath, String adaptationType, int adaptationTimestep ){
 
 		ObjectFactory factory= new ObjectFactory();
 		 	
 		AdaptationDesignResult output=new AdaptationDesignResult();
-		GenericXMLHelper xmlHelp= new GenericXMLHelper(functionalityToTierPath);
+		
+		xmlHelp= new GenericXMLHelper(functionalityToTierPath);
 		List<Element> mapping=xmlHelp.getElements("tier");
+		
 		xmlHelp= new GenericXMLHelper(space4cloudPerformancePath);
 		List<Element> performance=xmlHelp.getElements("Seff");
+		List<Element> tiersPerformance=xmlHelp.getElements("Tier");
+		
 		MonitoringRulesHelper rulesHelper= new MonitoringRulesHelper();
-			
+		
 		Containers model=factory.createContainers();
 		
 		try {
+
+			
 			ResourceModelExtension solution = (ResourceModelExtension) XMLHelper
 					.deserialize(new FileInputStream(space4cloudSolutionPath),
 							ResourceModelExtension.class);
@@ -72,16 +81,30 @@ public class AdaptationModelBuilder {
 				
 				CloudResource resource=this.dbHandler.getCloudResource(tier.getProvider(), 
 						tier.getCloudResource().getServiceName(), 
-						tier.getCloudResource().getResourceSizeID());				
+						tier.getCloudResource().getResourceSizeID());	
 				
-				newTier.setId(tier.getId());
+				for(Element t:tiersPerformance){
+					if(t.getAttribute("id").equals(tier.getId())){
+						newTier.setId(t.getAttribute("name"));
+					}
+				}
+				
 				newTier.setInitialNumberOfVMs(tier.getCloudResource().getReplicas().getReplicaElement().get(0).getValue());	
 							
-				//the mapping funztionalities2tier is inserted in the file sent to the SAR at runtime only if the 
-				//optimization is performed considering the method as classes
-				if(adaptationType.equals("method")){		
-					this.setMapping(mapping, newTier, xmlHelp);
-				}
+					
+					for(Element e:mapping){
+						if(e.getAttribute("id").equals(tier.getId())){
+							List<Element> functionalities=xmlHelp.getElements(e, "functionality");
+							for(Element f : functionalities){
+								Functionality toAdd=factory.createApplicationTierFunctionality();
+								toAdd.setId(f.getAttribute("id"));
+								newTier.getFunctionality().add(toAdd);
+							}
+						}
+					}
+					
+				
+				
 				
 				//design response time thresholds will be setted depending on the adaptation type (method or tier)
 				this.setResponseTimeThresholds(adaptationType, performance, newTier, xmlHelp);
@@ -115,55 +138,38 @@ public class AdaptationModelBuilder {
 					
 			}
 			
+			
+			
 			JAXBContext context = JAXBContext.newInstance("it.polimi.modaclouds.adaptationDesignTime4Cloud.model");
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
-            OutputStream out = new FileOutputStream( "outputModelExample.xml" );
+			File finalModel=new File("outputModelExample.xml");
+            OutputStream out = new FileOutputStream( finalModel );
 			marshaller.marshal(model,out);
 			
-			
-			context=JAXBContext.newInstance("it.polimi.modaclouds.qos_models.schema");
-			marshaller=context.createMarshaller();
-			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
-            out = new FileOutputStream( "rules.xml" );
-			marshaller.marshal(rulesHelper.createResponseTimeThresholdRules(model),out);	
+			output.setPathToAdaptationModel(finalModel.getAbsolutePath());
+			output.setResponseTimeThresholdRules(rulesHelper.createResponseTimeThresholdRules(model, adaptationType, adaptationTimestep));
 			
 			out.close();
+			
 		} catch ( JAXBException | SAXException | StaticInputBuildingException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		
 		
-		return null;
+		return output;
 	}
 	
-	
-	private void setMapping(List<Element> mapping, ApplicationTier newTier, GenericXMLHelper xmlHelp){
-		
-		for(Element e: mapping){
-			if(e.getAttribute("id").equals(newTier.getId())){
-				List<Element> functionalities=xmlHelp.getElements(e, "functionality");
-				for(Element f : functionalities){
-					Functionality toAdd=new Functionality();
-					toAdd.setId(f.getAttribute("id"));
-					
-					newTier.getFunctionality().add(toAdd);
-				}
-			}
-		}
-		
-	}
 	
 	//calculating the design response time thresholds for tier or for method
 	private void setResponseTimeThresholds(String adaptationType, List<Element> performance, ApplicationTier newTier, GenericXMLHelper xmlHelp){
 		
 		if(adaptationType.equals("method")){
-			
+			//how to set thresholds if the MILP problem on the method version?
 		}else if(adaptationType.equals("tier")){
 			
-			List<float[]> allWeigthedRT= new ArrayList<float[]>();
-			List<float[]> allTHR=new ArrayList<float[]>();
+			List<float[]> sumWeigthedRT= new ArrayList<float[]>();
+			List<float[]> sumTHR=new ArrayList<float[]>();
 			
 			for(Element e: performance){
 				for(Functionality f: newTier.getFunctionality()){
@@ -187,8 +193,8 @@ public class AdaptationModelBuilder {
 							weigthedResponseTime[i]=weigthedResponseTime[i]*throughput[i];
 						}
 						
-						allWeigthedRT.add(weigthedResponseTime);
-						allTHR.add(throughput);
+						sumWeigthedRT.add(weigthedResponseTime);
+						sumTHR.add(throughput);
 					}
 
 				}
@@ -200,13 +206,13 @@ public class AdaptationModelBuilder {
 				
 				float num=0;
 				
-				for(float[] temp: allWeigthedRT){
+				for(float[] temp: sumWeigthedRT){
 					num=num+temp[i];
 				}
 				
 				float den=0;
 				
-				for(float[] temp: allTHR){
+				for(float[] temp: sumTHR){
 					den=den+temp[i];
 				}
 				

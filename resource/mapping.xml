@@ -1,25 +1,23 @@
 <?xml version="1.0"?>
 <functionality2Tier>
 	<tier id="MIC">
-		<functionality id="mic-frontend-mon-register">
-			<subFunctionality id="DBregister" probability="0.5" />
-			<subFunctionality id="registerError" probability="0.5" />
-		<functionality/>
-		<functionality id="mic-frontend-mon-saveAnswers">
-			<subFunctionality id="DBsaveAnswers" probability="1" />
-			<subFunctionality id="mic-backend-mon-compute-similarities" probability="1" />
-		<functionality/>		
-		<functionality id="mic-frontend-mon-answerQuestions">
-			<subFunctionality id="DBanswerQuestions" probability="1" />
-		<functionality/>	
-		<functionality id="registerError"/>
+		<functionality id="mic-frontend-mon-register" name="register">
+			<subFunctionality id="DBregister" name="regDB" probability="0.5"/>
+		</functionality>
+		<functionality id="mic-frontend-mon-saveAnswers" name="saveAnswer">
+			<subFunctionality id="DBsaveAnswers" name="saveAnswDB" probability="1"/>
+			<subFunctionality id="mic-backend-mon-compute-similarities"  name="compSim" probability="1"/>
+		</functionality>
+		<functionality id="mic-frontend-mon-answerQuestions" name="answerQuestions">
+			<subFunctionality id="DBanswerQuestions" name="answQuestDB" probability="1"/>
+		</functionality>
 	</tier>
 	<tier id="MICBACKEND">
-		<functionality id="mic-backend-mon-compute-similarities"/>
+		<functionality id="mic-backend-mon-compute-similarities" name="compSim"/>
 	</tier>
 	<tier id="MICDB">
-		<functionality id="DBregister"/>
-		<functionality id="DBsaveAnswers"/>
-		<functionality id="DBanswerQuestions"/>
+		<functionality id="DBregister" name="regDB"/>
+		<functionality id="DBsaveAnswers" name="saveAnswDB"/>
+		<functionality id="DBanswerQuestions" name="answQuestDB"/>
 	</tier>
 </functionality2Tier>

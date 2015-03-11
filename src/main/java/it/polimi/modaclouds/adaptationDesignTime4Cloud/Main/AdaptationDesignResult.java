@@ -8,28 +8,28 @@ import it.polimi.modaclouds.qos_models.schema.MonitoringRules;
 
 public class AdaptationDesignResult {
 	
-	private List<MonitoringRule> responseTimeThresholdRules;
+	private MonitoringRules responseTimeThresholdRules;
 	
-	private Path pathToAdaptationModel;
+	private String pathToAdaptationModel;
 	
 	public AdaptationDesignResult(){
 		
 	}
 
-	public List<MonitoringRule> getResponseTimeThresholdRules() {
+	public MonitoringRules getResponseTimeThresholdRules() {
 		return responseTimeThresholdRules;
 	}
 
 	public void setResponseTimeThresholdRules(
-			List<MonitoringRule> responseTimeThresholdRules) {
+			MonitoringRules responseTimeThresholdRules) {
 		this.responseTimeThresholdRules = responseTimeThresholdRules;
 	}
 
-	public Path getPathToAdaptationModel() {
+	public String getPathToAdaptationModel() {
 		return pathToAdaptationModel;
 	}
 
-	public void setPathToAdaptationModel(Path pathToAdaptationModel) {
+	public void setPathToAdaptationModel(String pathToAdaptationModel) {
 		this.pathToAdaptationModel = pathToAdaptationModel;
 	}
 	
