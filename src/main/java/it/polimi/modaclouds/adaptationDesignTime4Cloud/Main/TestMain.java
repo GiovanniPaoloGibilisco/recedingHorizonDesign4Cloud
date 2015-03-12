@@ -28,8 +28,8 @@ public class TestMain
     	
     	
     	AdaptationModelBuilder builder= new AdaptationModelBuilder();
-    	AdaptationDesignResult output=builder.createAdaptationModelAndRules("/home/mik/workspace/adaptationDesignTime4Cloud/resource/solution.xml",
-    			"/home/mik/workspace/adaptationDesignTime4Cloud/resource/mapping.xml", 
+    	AdaptationDesignResult output=builder.createAdaptationModelAndRules("/home/mik/workspace/adaptationDesignTime4Cloud/resource/ResourceContainerExtension.xml",
+    			"/home/mik/workspace/adaptationDesignTime4Cloud/resource/Functionality2Tier.xml", 
     			"/home/mik/workspace/adaptationDesignTime4Cloud/resource/performance.xml",
     			"tier", 5);
     	
