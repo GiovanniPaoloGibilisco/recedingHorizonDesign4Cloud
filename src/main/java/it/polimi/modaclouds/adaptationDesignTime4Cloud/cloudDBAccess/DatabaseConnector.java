@@ -43,8 +43,8 @@ public class DatabaseConnector {
 	protected static final Logger logger = LoggerFactory.getLogger(DatabaseConnector.class);
 //	
 
-	public static String url = "jdbc:mysql://127.0.0.1:3306/";		
-	public static String dbName = "cloud_full";
+	public static String url = "jdbc:mysql://specclient2.dei.polimi.it:3306/";		
+	public static String dbName = "cloud";
 	public static String driver = "com.mysql.jdbc.Driver";
 	public static String userName = "moda";
 	public static String password = "modaclouds";

@@ -20,10 +20,8 @@ import it.polimi.modaclouds.resourcemodel.cloud.VirtualHWResourceType;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +38,7 @@ public class AdaptationModelBuilder {
 	
 	
 	private DataHandler dbHandler;
-	GenericXMLHelper xmlHelp;
+	private GenericXMLHelper xmlHelp;
 
 	public AdaptationModelBuilder(){
 		try {
@@ -50,12 +48,11 @@ public class AdaptationModelBuilder {
 		}
 	}
 	
-	public AdaptationDesignResult createAdaptationModelAndRules(String space4cloudSolutionPath, String functionalityToTierPath, 
-																String space4cloudPerformancePath, String adaptationType, int adaptationTimestep ){
+	public void createAdaptationModelAndRules(String space4cloudSolutionPath, String functionalityToTierPath, 
+																String space4cloudPerformancePath, int optimizationWindowLenght, int timestepDuration ){
 
 		ObjectFactory factory= new ObjectFactory();
 		 	
-		AdaptationDesignResult output=new AdaptationDesignResult();
 		
 		xmlHelp= new GenericXMLHelper(functionalityToTierPath);
 		List<Element> mapping=xmlHelp.getElements("tier");
@@ -67,6 +64,8 @@ public class AdaptationModelBuilder {
 		MonitoringRulesHelper rulesHelper= new MonitoringRulesHelper();
 		
 		Containers model=factory.createContainers();
+		model.setOptimizationWindowsLenght(optimizationWindowLenght);
+		model.setTimestepDuration(timestepDuration);
 		
 		try {
 
@@ -106,8 +105,7 @@ public class AdaptationModelBuilder {
 				
 				
 				
-				//design response time thresholds will be setted depending on the adaptation type (method or tier)
-				this.setResponseTimeThresholds(adaptationType, performance, newTier, xmlHelp);
+				this.setResponseTimeThresholds(performance, newTier, xmlHelp);
 						
 				boolean existingContainer=false;
 				Container toUpdate=null;
@@ -147,26 +145,23 @@ public class AdaptationModelBuilder {
             OutputStream out = new FileOutputStream( finalModel );
 			marshaller.marshal(model,out);
 			
-			output.setPathToAdaptationModel(finalModel.getAbsolutePath());
-			output.setResponseTimeThresholdRules(rulesHelper.createResponseTimeThresholdRules(model, adaptationType, adaptationTimestep));
-			
+			context = JAXBContext.newInstance("it.polimi.modaclouds.qos_models.schema");
+		    marshaller=context.createMarshaller();
+			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
+			out = new FileOutputStream( "rules.xml" );
+			marshaller.marshal(rulesHelper.createResponseTimeThresholdRules(model, timestepDuration),out);		
 			out.close();
 			
 		} catch ( JAXBException | SAXException | StaticInputBuildingException | IOException e) {
 			e.printStackTrace();
 		} 
-		
-		
-		return output;
+
 	}
 	
 	
-	//calculating the design response time thresholds for tier or for method
-	private void setResponseTimeThresholds(String adaptationType, List<Element> performance, ApplicationTier newTier, GenericXMLHelper xmlHelp){
+	private void setResponseTimeThresholds( List<Element> performance, ApplicationTier newTier, GenericXMLHelper xmlHelp){
 		
-		if(adaptationType.equals("method")){
-			//how to set thresholds if the MILP problem on the method version?
-		}else if(adaptationType.equals("tier")){
+
 			
 			List<float[]> sumWeigthedRT= new ArrayList<float[]>();
 			List<float[]> sumTHR=new ArrayList<float[]>();
@@ -178,12 +173,13 @@ public class AdaptationModelBuilder {
 						float[] throughput=new float[24];
 						
 						List<Element> thr=xmlHelp.getElements(e, "throughput");
+						List<Element> rt=xmlHelp.getElements(e, "avgRT");
+
 						
 						for(Element t: thr){
 							throughput[Integer.parseInt(t.getAttribute("hour"))]=Float.parseFloat(t.getAttribute("value"));
 						}
 						
-						List<Element> rt=xmlHelp.getElements(e, "avgRT");
 						
 						for(Element r: rt){
 							weigthedResponseTime[Integer.parseInt(r.getAttribute("hour"))]=Float.parseFloat(r.getAttribute("value"));
@@ -199,7 +195,7 @@ public class AdaptationModelBuilder {
 
 				}
 			}
-			
+
 			float[] thresholds=new float[24];
 			
 			for(int i=0; i<24 ; i++){
@@ -225,7 +221,7 @@ public class AdaptationModelBuilder {
 				
 			}
 			
-		}
+		
 		
 	}
 	

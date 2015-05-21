@@ -2,7 +2,6 @@ package it.polimi.modaclouds.adaptationDesignTime4Cloud.Main;
 
 
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ApplicationTier;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ApplicationTier.Functionality;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Container;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Containers;
 import it.polimi.modaclouds.qos_models.schema.Condition;
@@ -22,7 +21,7 @@ public class MonitoringRulesHelper {
 		
 	}
 	
-	public MonitoringRules createResponseTimeThresholdRules(Containers model, String adaptationType, int adaptationTimestep){
+	public MonitoringRules createResponseTimeThresholdRules(Containers model, int timestepDuration){
 		
 		
 		ObjectFactory factory= new ObjectFactory();
@@ -35,7 +34,6 @@ public class MonitoringRulesHelper {
 		MonitoringMetricAggregation aggregation;
 		Parameter tempParam;
 		
-		if(adaptationType.equals("tier")){
 			for(Container c: model.getContainer()){
 				for(ApplicationTier t: c.getApplicationTier()){
 					
@@ -46,8 +44,8 @@ public class MonitoringRulesHelper {
 						rule= factory.createMonitoringRule();
 						rule.setMonitoredTargets(factory.createMonitoredTargets());
 						rule.setId("respTimeThreshold_"+t.getId());
-						rule.setTimeStep(Integer.toString(adaptationTimestep*60));
-						rule.setTimeWindow(Integer.toString(adaptationTimestep*60));
+						rule.setTimeStep(Integer.toString(timestepDuration*60));
+						rule.setTimeWindow(Integer.toString(timestepDuration*60));
 						
 						target=factory.createMonitoredTarget();
 						target.setClazz("VM");
@@ -107,9 +105,7 @@ public class MonitoringRulesHelper {
 					}
 				}
 			}
-		}else if(adaptationType.equals("method")){
-			//how to generate "not user defined" thresholds and so rules when the adaptation is performed bny method?
-		}
+		
 	
 		return toReturn;
 	}

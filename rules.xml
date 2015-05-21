@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:monitoringRules xmlns="http://www.modaclouds.eu/xsd/2013/6/multi-cloud-extension" xmlns:ns2="http://www.modaclouds.eu/xsd/1.0/qos_constraints_schema" xmlns:ns3="http://www.modaclouds.eu/xsd/1.0/monitoring_rules_schema" xmlns:ns4="http://www.modaclouds.eu/xsd/2014/11/performances" xmlns:ns5="http://www.modaclouds.eu/xsd/2014/11/costs" xmlns:ns6="http://www.modaclouds.eu/xsd/2013/6/usage-model-ext" xmlns:ns7="http://www.modaclouds.eu/xsd/1.0/metrics_schema" xmlns:ns8="http://www.modaclouds.eu/xsd/2.0/aggregate_functions_schema" xmlns:ns9="http://www.modaclouds.eu/xsd/2.0/actions_schema" xmlns:ns10="http://www.modaclouds.eu/xsd/2.0/grouping_categories_schema" xmlns:ns11="http://www.modaclouds.eu/xsd/2013/6/resource-model-extension">
+    <ns3:monitoringRule id="respTimeThreshold_MiCfrontend" timeStep="300" timeWindow="300">
+        <ns3:monitoredTargets>
+            <ns3:monitoredTarget type="MiCfrontend" class="VM"/>
+        </ns3:monitoredTargets>
+        <ns3:collectedMetric metricName="ResponseTime">
+            <ns3:parameter name="samplingProbability">1</ns3:parameter>
+        </ns3:collectedMetric>
+        <ns3:metricAggregation groupingClass="VM" aggregateFunction="Average"/>
+        <ns3:condition>METRIC &amp;gt; -0.25177604</ns3:condition>
+        <ns3:actions>
+            <ns3:action name="OutputMetric">
+                <ns3:parameter name="metric">ResponseTimeOverThreshold</ns3:parameter>
+                <ns3:parameter name="value">METRIC</ns3:parameter>
+                <ns3:parameter name="resourceId">ID</ns3:parameter>
+            </ns3:action>
+        </ns3:actions>
+    </ns3:monitoringRule>
+    <ns3:monitoringRule id="respTimeThreshold_MiCbackend" timeStep="300" timeWindow="300">
+        <ns3:monitoredTargets>
+            <ns3:monitoredTarget type="MiCbackend" class="VM"/>
+        </ns3:monitoredTargets>
+        <ns3:collectedMetric metricName="ResponseTime">
+            <ns3:parameter name="samplingProbability">1</ns3:parameter>
+        </ns3:collectedMetric>
+        <ns3:metricAggregation groupingClass="VM" aggregateFunction="Average"/>
+        <ns3:condition>METRIC &amp;gt; 0.17310737</ns3:condition>
+        <ns3:actions>
+            <ns3:action name="OutputMetric">
+                <ns3:parameter name="metric">ResponseTimeOverThreshold</ns3:parameter>
+                <ns3:parameter name="value">METRIC</ns3:parameter>
+                <ns3:parameter name="resourceId">ID</ns3:parameter>
+            </ns3:action>
+        </ns3:actions>
+    </ns3:monitoringRule>
+    <ns3:monitoringRule id="respTimeThreshold_MICdatabase" timeStep="300" timeWindow="300">
+        <ns3:monitoredTargets>
+            <ns3:monitoredTarget type="MICdatabase" class="VM"/>
+        </ns3:monitoredTargets>
+        <ns3:collectedMetric metricName="ResponseTime">
+            <ns3:parameter name="samplingProbability">1</ns3:parameter>
+        </ns3:collectedMetric>
+        <ns3:metricAggregation groupingClass="VM" aggregateFunction="Average"/>
+        <ns3:condition>METRIC &amp;gt; 0.17310737</ns3:condition>
+        <ns3:actions>
+            <ns3:action name="OutputMetric">
+                <ns3:parameter name="metric">ResponseTimeOverThreshold</ns3:parameter>
+                <ns3:parameter name="value">METRIC</ns3:parameter>
+                <ns3:parameter name="resourceId">ID</ns3:parameter>
+            </ns3:action>
+        </ns3:actions>
+    </ns3:monitoringRule>
+</ns3:monitoringRules>

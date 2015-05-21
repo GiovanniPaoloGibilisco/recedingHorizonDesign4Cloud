@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<containers timestepDuration="5" optimizationWindowsLenght="5">
+    <container capacity="13.0" maxReserved="0" reservedCost="0.0" onDemandCost="0.0">
+        <applicationTier initialNumberOfVMs="1" id="MiCfrontend">
+            <responseTimeThreshold hour="0" value="-0.25177604"/>
+            <responseTimeThreshold hour="1" value="-0.25177604"/>
+            <responseTimeThreshold hour="2" value="-0.25177604"/>
+            <responseTimeThreshold hour="3" value="-0.25177604"/>
+            <responseTimeThreshold hour="4" value="-0.25177604"/>
+            <responseTimeThreshold hour="5" value="-0.25177604"/>
+            <responseTimeThreshold hour="6" value="-0.2516979"/>
+            <responseTimeThreshold hour="7" value="-0.2516979"/>
+            <responseTimeThreshold hour="8" value="-0.25167173"/>
+            <responseTimeThreshold hour="9" value="-0.25163206"/>
+            <responseTimeThreshold hour="10" value="-0.25162405"/>
+            <responseTimeThreshold hour="11" value="-0.25162193"/>
+            <responseTimeThreshold hour="12" value="-0.25162697"/>
+            <responseTimeThreshold hour="13" value="-0.2516254"/>
+            <responseTimeThreshold hour="14" value="-0.25162405"/>
+            <responseTimeThreshold hour="15" value="-0.25162295"/>
+            <responseTimeThreshold hour="16" value="-0.25162193"/>
+            <responseTimeThreshold hour="17" value="-0.25162405"/>
+            <responseTimeThreshold hour="18" value="-0.25163463"/>
+            <responseTimeThreshold hour="19" value="-0.2516586"/>
+            <responseTimeThreshold hour="20" value="-0.2516979"/>
+            <responseTimeThreshold hour="21" value="-0.25177604"/>
+            <responseTimeThreshold hour="22" value="-0.25177604"/>
+            <responseTimeThreshold hour="23" value="-0.25177604"/>
+            <Functionality id="mic-frontend-mon-register"/>
+            <Functionality id="mic-frontend-mon-saveAnswers"/>
+            <Functionality id="mic-frontend-mon-answerQuestions"/>
+        </applicationTier>
+        <applicationTier initialNumberOfVMs="1" id="MiCbackend">
+            <responseTimeThreshold hour="0" value="0.17310737"/>
+            <responseTimeThreshold hour="1" value="0.17310737"/>
+            <responseTimeThreshold hour="2" value="0.17310737"/>
+            <responseTimeThreshold hour="3" value="0.17310737"/>
+            <responseTimeThreshold hour="4" value="0.17310737"/>
+            <responseTimeThreshold hour="5" value="0.17310737"/>
+            <responseTimeThreshold hour="6" value="0.17326479"/>
+            <responseTimeThreshold hour="7" value="0.17326479"/>
+            <responseTimeThreshold hour="8" value="0.17331761"/>
+            <responseTimeThreshold hour="9" value="0.17339782"/>
+            <responseTimeThreshold hour="10" value="0.17341407"/>
+            <responseTimeThreshold hour="11" value="0.17341813"/>
+            <responseTimeThreshold hour="12" value="0.17340799"/>
+            <responseTimeThreshold hour="13" value="0.17341103"/>
+            <responseTimeThreshold hour="14" value="0.17341407"/>
+            <responseTimeThreshold hour="15" value="0.1734161"/>
+            <responseTimeThreshold hour="16" value="0.17341813"/>
+            <responseTimeThreshold hour="17" value="0.17341407"/>
+            <responseTimeThreshold hour="18" value="0.17339274"/>
+            <responseTimeThreshold hour="19" value="0.17334402"/>
+            <responseTimeThreshold hour="20" value="0.17326479"/>
+            <responseTimeThreshold hour="21" value="0.17310737"/>
+            <responseTimeThreshold hour="22" value="0.17310737"/>
+            <responseTimeThreshold hour="23" value="0.17310737"/>
+            <Functionality id="mic-backend-mon-compute-similarities"/>
+        </applicationTier>
+        <applicationTier initialNumberOfVMs="1" id="MICdatabase">
+            <responseTimeThreshold hour="0" value="0.17310737"/>
+            <responseTimeThreshold hour="1" value="0.17310737"/>
+            <responseTimeThreshold hour="2" value="0.17310737"/>
+            <responseTimeThreshold hour="3" value="0.17310737"/>
+            <responseTimeThreshold hour="4" value="0.17310737"/>
+            <responseTimeThreshold hour="5" value="0.17310737"/>
+            <responseTimeThreshold hour="6" value="0.17326479"/>
+            <responseTimeThreshold hour="7" value="0.17326479"/>
+            <responseTimeThreshold hour="8" value="0.17331761"/>
+            <responseTimeThreshold hour="9" value="0.17339782"/>
+            <responseTimeThreshold hour="10" value="0.17341407"/>
+            <responseTimeThreshold hour="11" value="0.17341812"/>
+            <responseTimeThreshold hour="12" value="0.17340799"/>
+            <responseTimeThreshold hour="13" value="0.17341103"/>
+            <responseTimeThreshold hour="14" value="0.17341407"/>
+            <responseTimeThreshold hour="15" value="0.1734161"/>
+            <responseTimeThreshold hour="16" value="0.17341812"/>
+            <responseTimeThreshold hour="17" value="0.17341407"/>
+            <responseTimeThreshold hour="18" value="0.17339273"/>
+            <responseTimeThreshold hour="19" value="0.17334402"/>
+            <responseTimeThreshold hour="20" value="0.17326479"/>
+            <responseTimeThreshold hour="21" value="0.17310737"/>
+            <responseTimeThreshold hour="22" value="0.17310737"/>
+            <responseTimeThreshold hour="23" value="0.17310737"/>
+            <Functionality id="DBregister"/>
+            <Functionality id="DBsaveAnswers"/>
+            <Functionality id="DBanswerQuestions"/>
+        </applicationTier>
+    </container>
+</containers>

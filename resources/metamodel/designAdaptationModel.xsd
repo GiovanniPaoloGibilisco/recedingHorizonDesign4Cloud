@@ -5,6 +5,8 @@
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" name="container" type="container"/>
 			</xs:sequence>
+			<xs:attribute name="timestepDuration" type="xs:int" use="required"/>
+			<xs:attribute name="optimizationWindowsLenght" type="xs:int" use="required"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:complexType name="container">
@@ -32,6 +34,6 @@
 		</xs:sequence>	
 		<xs:attribute name="initialNumberOfVMs" type="xs:int" use="required"/>
 		<xs:attribute name="id" type="xs:string" use="required"/>
+		<xs:attribute name="responseTimeThresholdRuleID" type="xs:string" use="required"/>
 	</xs:complexType>
-	
 </xs:schema>
