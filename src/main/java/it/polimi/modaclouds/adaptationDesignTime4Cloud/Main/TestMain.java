@@ -11,12 +11,12 @@ public class TestMain
     	
     	
     	
-    	AdaptationModelBuilder builder= new AdaptationModelBuilder("/Users/ft/Development/workspace-s4c-runtime/modaclouds-models/MiCforJSS/localDBConnection.properties");
+    	AdaptationModelBuilder builder= new AdaptationModelBuilder("/home/micheleguerriero/workspace/adaptationDesignTime4Cloud/resources/localDBConnection.properties");
     	builder.createAdaptationModelAndRules(
-    			"/Users/ft/Development/workspace-s4c-runtime/modaclouds-models/MiCforJSS/space4cloud",
-    			"/Users/ft/Development/workspace-s4c-runtime/modaclouds-models/MiCforJSS/space4cloud/solutionAmazon.xml",
-    			"/Users/ft/Desktop/tmp/trash/functionalityChain2Tier_example.xml", 
-    			"/Users/ft/Development/workspace-s4c-runtime/modaclouds-models/MiCforJSS/space4cloud/performanceAmazon.xml",
+    			"/home/micheleguerriero/workspace/adaptationDesignTime4Cloud/resources",
+    			"/home/micheleguerriero/workspace/adaptationDesignTime4Cloud/resources/solutionAmazon.xml",
+    			"/home/micheleguerriero/workspace/adaptationDesignTime4Cloud/resources/functionalityChain2Tier_example.xml", 
+    			"/home/micheleguerriero/workspace/adaptationDesignTime4Cloud/resources/performanceAmazon.xml",
     			5, 5, "Test");
     	
 

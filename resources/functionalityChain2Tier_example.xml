@@ -1,23 +1,13 @@
 <?xml version="1.0"?>
 <functionality2Tier>
-	<tier id="MIC">
-		<functionality id="mic-frontend-mon-register" name="register">
-			<subFunctionality id="DBregister" name="regDB" probability="0.5"/>
-		</functionality>
-		<functionality id="mic-frontend-mon-saveAnswers" name="saveAnswer">
-			<subFunctionality id="DBsaveAnswers" name="saveAnswDB" probability="1"/>
-			<subFunctionality id="mic-backend-mon-compute-similarities"  name="compSim" probability="1"/>
-		</functionality>
-		<functionality id="mic-frontend-mon-answerQuestions" name="answerQuestions">
-			<subFunctionality id="DBanswerQuestions" name="answQuestDB" probability="1"/>
-		</functionality>
-	</tier>
-	<tier id="MICBACKEND">
-		<functionality id="mic-backend-mon-compute-similarities" name="compSim"/>
-	</tier>
-	<tier id="MICDB">
-		<functionality id="DBregister" name="regDB"/>
-		<functionality id="DBsaveAnswers" name="saveAnswDB"/>
-		<functionality id="DBanswerQuestions" name="answQuestDB"/>
+	<tier id="_JWHSgMdLEeSzTs-iRu8Llw">
+		<functionality id="_McFxgMc2EeSzTs-iRu8Llw" name="insertUserProfile"/>
+		<functionality id="_dUmhkMdIEeSzTs-iRu8Llw" name="getTopic"/>
+		<functionality id="_ceDeoMdJEeSzTs-iRu8Llw" name="updatePreferences"/>
+				<functionality id="_uupb8NhyEeSGjb1hTo3-zQ" name="updateSimilarity"/>
+				<functionality id="_TMXA4Mc1EeSzTs-iRu8Llw" name="updateSimilarity"/>
+				<functionality id="_GUDXEMdIEeSzTs-iRu8Llw" name="answerQuestions"/>
+						<functionality id="_KXN1EMdJEeSzTs-iRu8Llw" name="saveAnswer"/>
+						<functionality id="_sPjOMNhwEeSGjb1hTo3-zQ" name="register"/>
 	</tier>
 </functionality2Tier>
