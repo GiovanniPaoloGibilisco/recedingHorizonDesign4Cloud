@@ -149,7 +149,7 @@ public class AdaptationModelBuilder {
 			JAXBContext context = JAXBContext.newInstance("it.polimi.modaclouds.adaptationDesignTime4Cloud.model");
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
-			File config = Paths.get(basePath, "S4COps-config" + suffix + ".xml").toFile();
+			File config = Paths.get(basePath, "S4COpsConfig" + suffix + ".xml").toFile();
             try (OutputStream out = new FileOutputStream( config )) {
             	marshaller.marshal(model,out);
             	logger.info("Config file {} created!", config.toString());
@@ -158,7 +158,7 @@ public class AdaptationModelBuilder {
 			context = JAXBContext.newInstance("it.polimi.tower4clouds.rules");
 		    marshaller=context.createMarshaller();
 			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
-			File rules = Paths.get(basePath, "lowerSLA-rules" + suffix + ".xml").toFile();
+			File rules = Paths.get(basePath, "lowerSLARules" + suffix + ".xml").toFile();
 			try (OutputStream out = new FileOutputStream(rules)) {
 				marshaller.marshal(rulesHelper.createResponseTimeThresholdRules(model, timestepDuration),out);
 				logger.info("Rules file {} created!", rules.toString());
