@@ -17,11 +17,11 @@ import it.polimi.modaclouds.resourcemodel.cloud.Cost;
 import it.polimi.modaclouds.resourcemodel.cloud.VirtualHWResource;
 import it.polimi.modaclouds.resourcemodel.cloud.VirtualHWResourceType;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class AdaptationModelBuilder {
 		}
 	}
 	
-	public void createAdaptationModelAndRules(String space4cloudSolutionPath, String functionalityToTierPath, 
+	public void createAdaptationModelAndRules(String basePath, String space4cloudSolutionPath, String functionalityToTierPath, 
 																String space4cloudPerformancePath, int optimizationWindowLenght, int timestepDuration ){
 
 		ObjectFactory factory= new ObjectFactory();
@@ -141,14 +141,13 @@ public class AdaptationModelBuilder {
 			JAXBContext context = JAXBContext.newInstance("it.polimi.modaclouds.adaptationDesignTime4Cloud.model");
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
-			File finalModel=new File("outputModelExample.xml");
-            OutputStream out = new FileOutputStream( finalModel );
+            OutputStream out = new FileOutputStream( Paths.get(basePath, "S4COps-config.xml").toFile() );
 			marshaller.marshal(model,out);
 			
 			context = JAXBContext.newInstance("it.polimi.modaclouds.qos_models.schema");
 		    marshaller=context.createMarshaller();
 			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
-			out = new FileOutputStream( "rules.xml" );
+			out = new FileOutputStream(Paths.get(basePath, "lowerSLA-rules.xml").toFile());
 			marshaller.marshal(rulesHelper.createResponseTimeThresholdRules(model, timestepDuration),out);		
 			out.close();
 			

@@ -12,7 +12,7 @@ public class TestMain
     	
     	
     	AdaptationModelBuilder builder= new AdaptationModelBuilder();
-    	builder.createAdaptationModelAndRules("resources/resourceExtention_example.xml",
+    	builder.createAdaptationModelAndRules(".", "resources/resourceExtention_example.xml",
     			"resources/functionalityChain2Tier_example.xml", 
     			"resources/performance_example.xml",
     			5, 5);
