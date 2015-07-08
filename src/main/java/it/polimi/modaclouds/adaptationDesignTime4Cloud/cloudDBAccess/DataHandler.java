@@ -26,8 +26,11 @@ import it.polimi.modaclouds.resourcemodel.cloud.V_Memory;
 import it.polimi.modaclouds.resourcemodel.cloud.VirtualHWResource;
 import it.polimi.modaclouds.resourcemodel.cloud.VirtualHWResourceType;
 
-
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +49,31 @@ public class DataHandler {
 
 	private static final Logger logger=LoggerFactory.getLogger(DataHandler.class);
 	private final CloudProvidersDictionary cloudProviders;
+	
+	public static void initDatabaseConfiguration(String dbConnectionFile) throws Exception {
+		InputStream dbConfigurationStream = null;
+		//load the configuration file if specified 
+
+		if(dbConnectionFile != null && Paths.get(dbConnectionFile).toFile().exists()){
+			dbConfigurationStream = new FileInputStream(dbConnectionFile);
+		} else{
+			//if the file has not been specified or it does not exist use the one with default values embedded in the plugin				
+			throw new FileNotFoundException("File not found!");			
+		}
+
+		try {
+			DatabaseConnector.initConnection(dbConfigurationStream);
+			DataHandlerFactory.getHandler();
+		} catch (SQLException | IOException | DatabaseConnectionFailureExteption e) {
+			throw new Exception("Error connecting to the Database",e);
+		}		
+
+		try {
+			dbConfigurationStream.close();
+		} catch (IOException e) {
+			logger.error("Error closing the dabase configuration");
+		}
+	}
 
 	/**
 	 * Instantiates a new data handler. it also charges data from the database

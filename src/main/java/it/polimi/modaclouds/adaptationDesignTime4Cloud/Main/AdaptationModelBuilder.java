@@ -22,7 +22,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,16 +39,18 @@ public class AdaptationModelBuilder {
 	private DataHandler dbHandler;
 	private GenericXMLHelper xmlHelp;
 
-	public AdaptationModelBuilder(){
+	public AdaptationModelBuilder(String dbConnectionFile) {
 		try {
+			DataHandler.initDatabaseConfiguration(dbConnectionFile);
+			
 			this.dbHandler = new DataHandler();
-		} catch (SQLException e1) {
+		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 	}
 	
 	public void createAdaptationModelAndRules(String basePath, String space4cloudSolutionPath, String functionalityToTierPath, 
-																String space4cloudPerformancePath, int optimizationWindowLenght, int timestepDuration ){
+																String space4cloudPerformancePath, int optimizationWindowLenght, int timestepDuration, String suffix){
 
 		ObjectFactory factory= new ObjectFactory();
 		 	
@@ -79,8 +80,8 @@ public class AdaptationModelBuilder {
 				ApplicationTier newTier = factory.createApplicationTier();
 				
 				CloudResource resource=this.dbHandler.getCloudResource(tier.getProvider(), 
-						tier.getCloudResource().getServiceName(), 
-						tier.getCloudResource().getResourceSizeID());	
+						tier.getCloudElement().getServiceName(), 
+						tier.getCloudElement().getResourceSizeID());	
 				
 				for(Element t:tiersPerformance){
 					if(t.getAttribute("id").equals(tier.getId())){
@@ -88,7 +89,7 @@ public class AdaptationModelBuilder {
 					}
 				}
 				
-				newTier.setInitialNumberOfVMs(tier.getCloudResource().getReplicas().getReplicaElement().get(0).getValue());	
+				newTier.setInitialNumberOfVMs(tier.getCloudElement().getReplicas().getReplicaElement().get(0).getValue());	
 							
 					
 					for(Element e:mapping){
@@ -125,8 +126,8 @@ public class AdaptationModelBuilder {
 					Container toAdd= factory.createContainer();
 					toAdd.setCapacity(capacity);
 					toAdd.setMaxReserved(0);
-					toAdd.setOnDemandCost(this.getResourceOnDemandCost(resource, tier.getCloudResource().getLocation().getRegion()));
-					toAdd.setReservedCost(this.getResourceReservedCost(resource, tier.getCloudResource().getLocation().getRegion()));
+					toAdd.setOnDemandCost(this.getResourceOnDemandCost(resource, tier.getCloudElement().getLocation().getRegion()));
+					toAdd.setReservedCost(this.getResourceReservedCost(resource, tier.getCloudElement().getLocation().getRegion()));
 					toAdd.getApplicationTier().add(newTier);
 					model.getContainer().add(toAdd);
 				}
@@ -141,13 +142,13 @@ public class AdaptationModelBuilder {
 			JAXBContext context = JAXBContext.newInstance("it.polimi.modaclouds.adaptationDesignTime4Cloud.model");
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
-            OutputStream out = new FileOutputStream( Paths.get(basePath, "S4COps-config.xml").toFile() );
+            OutputStream out = new FileOutputStream( Paths.get(basePath, "S4COps-config" + suffix + ".xml").toFile() );
 			marshaller.marshal(model,out);
 			
-			context = JAXBContext.newInstance("it.polimi.modaclouds.qos_models.schema");
+			context = JAXBContext.newInstance("it.polimi.tower4clouds.rules");
 		    marshaller=context.createMarshaller();
 			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
-			out = new FileOutputStream(Paths.get(basePath, "lowerSLA-rules.xml").toFile());
+			out = new FileOutputStream(Paths.get(basePath, "lowerSLA-rules" + suffix + ".xml").toFile());
 			marshaller.marshal(rulesHelper.createResponseTimeThresholdRules(model, timestepDuration),out);		
 			out.close();
 			

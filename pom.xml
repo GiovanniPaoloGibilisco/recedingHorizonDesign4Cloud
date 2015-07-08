@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>it.polimi.modaclouds.</groupId>
+	<groupId>it.polimi.modaclouds</groupId>
 	<artifactId>adaptationDesignTime4Cloud</artifactId>
 	<version>1.0</version>
 	<packaging>jar</packaging>
@@ -40,22 +40,47 @@
 		<dependency>
 			<groupId>it.polimi.modaclouds.qos-models</groupId>
 			<artifactId>qos-models</artifactId>
-			<version>2.2.1</version>
+			<version>3.0.1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>log4j-over-slf4j</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- start cloud DB access required dependencies -->
-
-		<dependency>
-			<groupId>it.polimi.modaclouds.space4cloud</groupId>
-			<artifactId>milp</artifactId>
-			<version>0.0.21</version>
-		</dependency>
 
 		<dependency>
 			<groupId>it.polimi.modaclouds</groupId>
 			<artifactId>resourcemodel</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		
+		<dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.30</version>
+        </dependency>
+		
+		<dependency>
+            <groupId>it.polimi.tower4clouds</groupId>
+            <artifactId>rules</artifactId>
+            <version>0.2.1</version>
+
+            <exclusions>
+            	<exclusion>
+            		<artifactId>log4j-over-slf4j</artifactId>
+            		<groupId>org.slf4j</groupId>
+            	</exclusion>
+            </exclusions>
+		</dependency>
+        
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.7</version>
+        </dependency>
 
 		<dependency>
 			<groupId>org.eclipse.emf</groupId>

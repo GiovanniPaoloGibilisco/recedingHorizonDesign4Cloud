@@ -4,15 +4,15 @@ package it.polimi.modaclouds.adaptationDesignTime4Cloud.Main;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ApplicationTier;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Container;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Containers;
-import it.polimi.modaclouds.qos_models.schema.Condition;
-import it.polimi.modaclouds.qos_models.schema.MonitoringRule;
-import it.polimi.modaclouds.qos_models.schema.MonitoringRules;
-import it.polimi.modaclouds.qos_models.schema.CollectedMetric;
-import it.polimi.modaclouds.qos_models.schema.MonitoredTarget;
-import it.polimi.modaclouds.qos_models.schema.Action;
-import it.polimi.modaclouds.qos_models.schema.MonitoringMetricAggregation;
-import it.polimi.modaclouds.qos_models.schema.Parameter;
-import it.polimi.modaclouds.qos_models.schema.ObjectFactory;
+import it.polimi.tower4clouds.rules.Action;
+import it.polimi.tower4clouds.rules.CollectedMetric;
+import it.polimi.tower4clouds.rules.Condition;
+import it.polimi.tower4clouds.rules.MonitoredTarget;
+import it.polimi.tower4clouds.rules.MonitoringMetricAggregation;
+import it.polimi.tower4clouds.rules.MonitoringRule;
+import it.polimi.tower4clouds.rules.MonitoringRules;
+import it.polimi.tower4clouds.rules.ObjectFactory;
+import it.polimi.tower4clouds.rules.Parameter;
 
 
 public class MonitoringRulesHelper {
