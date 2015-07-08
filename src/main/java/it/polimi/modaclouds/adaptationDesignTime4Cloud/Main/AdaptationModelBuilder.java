@@ -17,6 +17,7 @@ import it.polimi.modaclouds.resourcemodel.cloud.Cost;
 import it.polimi.modaclouds.resourcemodel.cloud.VirtualHWResource;
 import it.polimi.modaclouds.resourcemodel.cloud.VirtualHWResourceType;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,10 +31,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.eclipse.emf.common.util.EList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 public class AdaptationModelBuilder {
+	
+	private static final Logger logger = LoggerFactory.getLogger(AdaptationModelBuilder.class);
 	
 	
 	private DataHandler dbHandler;
@@ -45,13 +50,15 @@ public class AdaptationModelBuilder {
 			
 			this.dbHandler = new DataHandler();
 		} catch (Exception e1) {
-			e1.printStackTrace();
+			logger.error("Error while initializing the database.", e1);
 		}
 	}
 	
 	public void createAdaptationModelAndRules(String basePath, String space4cloudSolutionPath, String functionalityToTierPath, 
 																String space4cloudPerformancePath, int optimizationWindowLenght, int timestepDuration, String suffix){
 
+		logger.info("Reading the input files and preparing the results...");
+		
 		ObjectFactory factory= new ObjectFactory();
 		 	
 		
@@ -142,18 +149,23 @@ public class AdaptationModelBuilder {
 			JAXBContext context = JAXBContext.newInstance("it.polimi.modaclouds.adaptationDesignTime4Cloud.model");
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
-            OutputStream out = new FileOutputStream( Paths.get(basePath, "S4COps-config" + suffix + ".xml").toFile() );
-			marshaller.marshal(model,out);
+			File config = Paths.get(basePath, "S4COps-config" + suffix + ".xml").toFile();
+            try (OutputStream out = new FileOutputStream( config )) {
+            	marshaller.marshal(model,out);
+            	logger.info("Config file {} created!", config.toString());
+            }
 			
 			context = JAXBContext.newInstance("it.polimi.tower4clouds.rules");
 		    marshaller=context.createMarshaller();
 			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
-			out = new FileOutputStream(Paths.get(basePath, "lowerSLA-rules" + suffix + ".xml").toFile());
-			marshaller.marshal(rulesHelper.createResponseTimeThresholdRules(model, timestepDuration),out);		
-			out.close();
+			File rules = Paths.get(basePath, "lowerSLA-rules" + suffix + ".xml").toFile();
+			try (OutputStream out = new FileOutputStream(rules)) {
+				marshaller.marshal(rulesHelper.createResponseTimeThresholdRules(model, timestepDuration),out);
+				logger.info("Rules file {} created!", rules.toString());
+			}
 			
 		} catch ( JAXBException | SAXException | StaticInputBuildingException | IOException e) {
-			e.printStackTrace();
+			logger.error("Error while producing the results.", e);
 		} 
 
 	}

@@ -28,6 +28,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Michele Ciavotta This class loads the providers from the database and
  *         puts them into an HashMap dictionary.
@@ -35,6 +38,8 @@ import java.util.Map;
  * @see CloudProvidersList
  */
 public class CloudProvidersDictionary {
+	
+	protected static final Logger logger = LoggerFactory.getLogger(CloudProvidersDictionary.class);
 
 	/** The provider db connectors. */
 	private final Map<String, ProviderDBConnector> providerDBConnectors;
@@ -56,8 +61,7 @@ public class CloudProvidersDictionary {
 		try {
 			DatabaseConnector.initConnection(null);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error while initializing the connection.", e);
 		}
 		Connection db = DatabaseConnector.getConnection();
 		ResultSet rs = db.createStatement().executeQuery(

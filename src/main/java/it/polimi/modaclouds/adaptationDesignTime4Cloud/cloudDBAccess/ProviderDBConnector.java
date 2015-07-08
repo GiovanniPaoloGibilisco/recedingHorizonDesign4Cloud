@@ -150,7 +150,7 @@ public class ProviderDBConnector implements GenericDBConnector {
 			createIaasSets();
 			return iaasMap;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting the IaaS services map.", e);
 			return null;
 		}
 
@@ -197,7 +197,7 @@ public class ProviderDBConnector implements GenericDBConnector {
 			createPaasSets();
 			return paasList;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting the PaaS services list.", e);
 			return null;
 		}
 	}
@@ -240,7 +240,7 @@ public class ProviderDBConnector implements GenericDBConnector {
 			createPaasSets();
 			return paasMap;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting the PaaS services map.", e);
 			return null;
 		}
 	}
@@ -361,7 +361,7 @@ public class ProviderDBConnector implements GenericDBConnector {
 
 			return list;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting the cloud platforms.", e);
 			return new ArrayList<CloudPlatform>();
 		}
 	}
@@ -434,7 +434,7 @@ public class ProviderDBConnector implements GenericDBConnector {
 			return cp;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting the cost profile.", e);
 			return null;
 		}
 	}
@@ -496,7 +496,7 @@ public class ProviderDBConnector implements GenericDBConnector {
 			rs.close();
 			return list;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting the costs.", e);
 			return null;
 		}
 	}
@@ -554,7 +554,7 @@ public class ProviderDBConnector implements GenericDBConnector {
 			rs.close();
 			return lvhr;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting the VHRs.", e);
 			return null;
 		}
 	}
@@ -605,7 +605,7 @@ public class ProviderDBConnector implements GenericDBConnector {
 			rs.close();
 			return v;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting the VHR.", e);
 			return null;
 		}
 	}
@@ -738,7 +738,7 @@ public class ProviderDBConnector implements GenericDBConnector {
 			rs.close();
 			return list;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting the cloud resources.", e);
 			return new ArrayList<CloudResource>();
 		}
 	}

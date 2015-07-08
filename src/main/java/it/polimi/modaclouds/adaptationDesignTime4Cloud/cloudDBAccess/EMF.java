@@ -29,6 +29,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -37,6 +39,8 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
  * @author Davide Franceschelli
  */
 public class EMF {
+	
+	private static final Logger logger = LoggerFactory.getLogger(EMF.class);
 
 	/** The cloud factory. */
 	private final CloudFactory cloudFactory;
@@ -84,7 +88,7 @@ public class EMF {
 			resource.save(Collections.EMPTY_MAP);
 			return true;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while serializing the object.", e);
 			return false;
 		}
 	}

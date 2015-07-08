@@ -93,8 +93,7 @@ public class DataHandler {
 			DatabaseConnector.initConnection(null);
 			handler = DataHandlerFactory.getHandler();
 		} catch (DatabaseConnectionFailureExteption | SQLException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error while initializing the connection.", e);
 		}
 
 		//String provider="Amazon";
