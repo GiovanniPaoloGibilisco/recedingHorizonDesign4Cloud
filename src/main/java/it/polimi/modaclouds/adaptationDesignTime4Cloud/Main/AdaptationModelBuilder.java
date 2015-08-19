@@ -3,8 +3,8 @@ package it.polimi.modaclouds.adaptationDesignTime4Cloud.Main;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.cloudDBAccess.DataHandler;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.exceptions.StaticInputBuildingException;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ApplicationTier;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ApplicationTier.Functionality;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ApplicationTier.ResponseTimeThreshold;
+import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Functionality;
+import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ResponseTimeThreshold;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Container;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Containers;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ObjectFactory;
@@ -14,6 +14,7 @@ import it.polimi.modaclouds.qos_models.schema.ResourceModelExtension;
 import it.polimi.modaclouds.qos_models.util.XMLHelper;
 import it.polimi.modaclouds.resourcemodel.cloud.CloudResource;
 import it.polimi.modaclouds.resourcemodel.cloud.Cost;
+import it.polimi.modaclouds.resourcemodel.cloud.Link;
 import it.polimi.modaclouds.resourcemodel.cloud.VirtualHWResource;
 import it.polimi.modaclouds.resourcemodel.cloud.VirtualHWResourceType;
 
@@ -72,6 +73,7 @@ public class AdaptationModelBuilder {
 		MonitoringRulesHelper rulesHelper= new MonitoringRulesHelper();
 		
 		Containers model=factory.createContainers();
+		model.setSpeedNorm(1200);
 		model.setOptimizationWindowsLenght(optimizationWindowLenght);
 		model.setTimestepDuration(timestepDuration);
 		
@@ -88,7 +90,7 @@ public class AdaptationModelBuilder {
 				
 				CloudResource resource=this.dbHandler.getCloudResource(tier.getProvider(), 
 						tier.getCloudElement().getServiceName(), 
-						tier.getCloudElement().getResourceSizeID());	
+						tier.getCloudElement().getResourceSizeID());
 				
 				for(Element t:tiersPerformance){
 					if(t.getAttribute("id").equals(tier.getId())){
@@ -96,14 +98,13 @@ public class AdaptationModelBuilder {
 					}
 				}
 				
-				newTier.setInitialNumberOfVMs(tier.getCloudElement().getReplicas().getReplicaElement().get(0).getValue());	
 							
 					
 					for(Element e:mapping){
 						if(e.getAttribute("id").equals(tier.getId())){
 							List<Element> functionalities=xmlHelp.getElements(e, "functionality");
 							for(Element f : functionalities){
-								Functionality toAdd=factory.createApplicationTierFunctionality();
+								Functionality toAdd=factory.createFunctionality();
 								toAdd.setId(f.getAttribute("id"));
 								newTier.getFunctionality().add(toAdd);
 							}
@@ -118,8 +119,7 @@ public class AdaptationModelBuilder {
 				boolean existingContainer=false;
 				Container toUpdate=null;
 							
-				//does the control between container be based just on the capacity?? (region...)
-				float capacity= this.getResourceCapacity(resource, 1200);
+				double capacity= this.getResourceCapacity(resource, model.getSpeedNorm());
 				
 				for(Container c: model.getContainer()){
 					if(c.getCapacity()==capacity){
@@ -132,6 +132,8 @@ public class AdaptationModelBuilder {
 				if(!existingContainer){
 					Container toAdd= factory.createContainer();
 					toAdd.setCapacity(capacity);
+					toAdd.setProcessingRate(this.getProcessingRate(resource));
+					toAdd.setNCore(this.getNCore(resource));
 					toAdd.setMaxReserved(0);
 					toAdd.setOnDemandCost(this.getResourceOnDemandCost(resource, tier.getCloudElement().getLocation().getRegion()));
 					toAdd.setReservedCost(this.getResourceReservedCost(resource, tier.getCloudElement().getLocation().getRegion()));
@@ -237,14 +239,13 @@ public class AdaptationModelBuilder {
 		
 	}
 	
-	private float getResourceCapacity(CloudResource resource, float speedNorm) throws StaticInputBuildingException{
+	private float getResourceCapacity(CloudResource resource, double speedNorm) throws StaticInputBuildingException{
 		
 		float toReturn=0;
 		
 		for (VirtualHWResource virtualResource : resource.getComposedOf()) {
 			
 			if (virtualResource.getType().equals(VirtualHWResourceType.CPU)) {
-
 				toReturn= (float) (virtualResource
 						.getNumberOfReplicas()
 						* virtualResource.getProcessingRate()
@@ -256,6 +257,30 @@ public class AdaptationModelBuilder {
 		else
 			return toReturn;
 		
+	}
+	
+	private int getNCore(CloudResource resource){
+		for (VirtualHWResource virtualResource : resource.getComposedOf()) {
+			
+			if (virtualResource.getType().equals(VirtualHWResourceType.CPU)) {
+				return virtualResource.getNumberOfReplicas();
+
+			}
+		}
+		
+		
+		return 0;
+	} 
+	
+	private double getProcessingRate(CloudResource resource){
+		for (VirtualHWResource virtualResource : resource.getComposedOf()) {
+			
+			if (virtualResource.getType().equals(VirtualHWResourceType.CPU)) {
+				return virtualResource.getProcessingRate();
+			}
+		}
+		
+		return 0;
 	}
 	
 	private float getResourceOnDemandCost(CloudResource resource, String region){

@@ -39,7 +39,7 @@ public class MonitoringRulesHelper {
 					
 					if(t.getFunctionality().size()>0){
 					
-						float threshold= t.getResponseTimeThreshold().get(0).getValue();
+						double threshold= t.getResponseTimeThreshold().get(0).getValue();
 						
 						rule= factory.createMonitoringRule();
 						rule.setMonitoredTargets(factory.createMonitoredTargets());

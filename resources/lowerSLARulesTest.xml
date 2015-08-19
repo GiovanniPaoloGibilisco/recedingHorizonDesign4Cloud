@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:monitoringRules xmlns="http://www.modaclouds.eu/xsd/2.0/aggregate_functions_schema" xmlns:ns2="http://www.modaclouds.eu/xsd/1.0/monitoring_rules_schema" xmlns:ns3="http://www.modaclouds.eu/xsd/2.0/actions_schema" xmlns:ns4="http://www.modaclouds.eu/xsd/1.0/metrics_schema" xmlns:ns5="http://www.modaclouds.eu/xsd/2.0/grouping_categories_schema">
+    <ns2:monitoringRule id="respTimeThreshold_Front End_CPU_Processor" timeStep="300" timeWindow="300">
+        <ns2:monitoredTargets>
+            <ns2:monitoredTarget type="Front End_CPU_Processor" class="VM"/>
+        </ns2:monitoredTargets>
+        <ns2:collectedMetric metricName="ResponseTime">
+            <ns2:parameter name="samplingProbability">1</ns2:parameter>
+        </ns2:collectedMetric>
+        <ns2:metricAggregation groupingClass="VM" aggregateFunction="Average"/>
+        <ns2:condition>METRIC &amp;gt; 0.0027226191014051437</ns2:condition>
+        <ns2:actions>
+            <ns2:action name="OutputMetric">
+                <ns2:parameter name="metric">ResponseTimeOverThreshold</ns2:parameter>
+                <ns2:parameter name="value">METRIC</ns2:parameter>
+                <ns2:parameter name="resourceId">ID</ns2:parameter>
+            </ns2:action>
+        </ns2:actions>
+    </ns2:monitoringRule>
+</ns2:monitoringRules>
