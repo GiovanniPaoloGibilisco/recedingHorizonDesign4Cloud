@@ -137,6 +137,7 @@ public class AdaptationModelBuilder {
 					toAdd.setMaxReserved(0);
 					toAdd.setOnDemandCost(this.getResourceOnDemandCost(resource, tier.getCloudElement().getLocation().getRegion()));
 					toAdd.setReservedCost(this.getResourceReservedCost(resource, tier.getCloudElement().getLocation().getRegion()));
+					toAdd.setVmType(tier.getCloudElement().getResourceSizeID());
 					toAdd.getApplicationTier().add(newTier);
 					model.getContainer().add(toAdd);
 				}

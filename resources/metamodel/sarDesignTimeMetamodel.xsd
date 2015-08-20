@@ -18,6 +18,7 @@
 		<xs:attribute name="capacity" type="xs:double" use="required"/>
 		<xs:attribute name="nCore" type="xs:int" use="required"/>
 		<xs:attribute name="processingRate" type="xs:double" use="required"/>
+		<xs:attribute name="vmType" type="xs:string" use="required"/>
 		<xs:attribute name="maxReserved" type="xs:int" use="required"/>
 		<xs:attribute name="reservedCost" type="xs:double" use="required"/>
 		<xs:attribute name="onDemandCost" type="xs:double" use="required"/>
