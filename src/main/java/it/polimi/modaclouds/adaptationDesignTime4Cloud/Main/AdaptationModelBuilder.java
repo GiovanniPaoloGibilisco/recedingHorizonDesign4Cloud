@@ -131,6 +131,7 @@ public class AdaptationModelBuilder {
 				
 				if(!existingContainer){
 					Container toAdd= factory.createContainer();
+					toAdd.setId("capacity"+capacity+"Container");
 					toAdd.setCapacity(capacity);
 					toAdd.setProcessingRate(this.getProcessingRate(resource));
 					toAdd.setNCore(this.getNCore(resource));
