@@ -72,7 +72,7 @@ public class MonitoringRulesHelper {
 						
 						condition=factory.createCondition();
 	
-						condition.setValue("METRIC &gt; "+threshold);
+						condition.setValue("METRIC > "+threshold);
 						
 						rule.setCondition(condition);
 						
