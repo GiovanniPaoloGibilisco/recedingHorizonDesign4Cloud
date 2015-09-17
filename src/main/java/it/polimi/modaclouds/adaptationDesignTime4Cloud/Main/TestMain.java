@@ -6,7 +6,7 @@ package it.polimi.modaclouds.adaptationDesignTime4Cloud.Main;
  */
 public class TestMain 
 {
-    public static void main( String[] args )
+    public static void main( String[] args ) throws Exception
     {
     	
     	

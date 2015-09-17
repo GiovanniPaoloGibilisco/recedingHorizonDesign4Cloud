@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2013 sp1 (http://www.altova.com) by ﻿Riccardo Desantis (Deadware) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:f2t="http://www.modaclouds.eu/xsd/2015/9/functionality2Tier"
+    targetNamespace="http://www.modaclouds.eu/xsd/2015/9/functionality2Tier"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xs:annotation>
+        <xs:appinfo>
+            <jaxb:schemaBindings>
+                <jaxb:package
+                    name="it.polimi.modaclouds.adaptationDesignTime4Cloud.functionality2tier" />
+            </jaxb:schemaBindings>
+        </xs:appinfo>
+    </xs:annotation>
+    
+    <xs:element name="functionality2Tier">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Tier" type="f2t:Tier" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="Tier">
+        <xs:sequence>
+            <xs:element name="Functionality" type="f2t:Functionality" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="Functionality">
+        <xs:sequence>
+            <xs:element name="subFunctionality" type="f2t:subFunctionality" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="subFunctionality">
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="probability" type="f2t:probability" use="required"/>
+    </xs:complexType>
+    <xs:simpleType name="probability">
+        <xs:restriction base="xs:double">
+            <xs:minInclusive value="0.0"/>
+            <xs:maxInclusive value="1.0"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

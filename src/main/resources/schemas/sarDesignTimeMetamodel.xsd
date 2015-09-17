@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:element name="containers">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xs:annotation>
+        <xs:appinfo>
+            <jaxb:schemaBindings>
+                <jaxb:package
+                    name="it.polimi.modaclouds.adaptationDesignTime4Cloud.model" />
+            </jaxb:schemaBindings>
+        </xs:appinfo>
+    </xs:annotation>
+
+    <xs:element name="containers">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" name="container" type="container"/>

@@ -2,27 +2,33 @@ package it.polimi.modaclouds.adaptationDesignTime4Cloud.Main;
 
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.cloudDBAccess.DataHandler;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.exceptions.StaticInputBuildingException;
+import it.polimi.modaclouds.adaptationDesignTime4Cloud.functionality2tier.Functionality2Tier;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ApplicationTier;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Functionality;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ResponseTimeThreshold;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Container;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Containers;
+import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Functionality;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ObjectFactory;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.util.GenericXMLHelper;
+import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ResponseTimeThreshold;
+import it.polimi.modaclouds.adaptationDesignTime4Cloud.util.ConfigManager;
+import it.polimi.modaclouds.qos_models.schema.HourValueType;
+import it.polimi.modaclouds.qos_models.schema.Performance;
+import it.polimi.modaclouds.qos_models.schema.Performance.Seffs.Seff;
+import it.polimi.modaclouds.qos_models.schema.Performance.Tiers.Tier;
 import it.polimi.modaclouds.qos_models.schema.ResourceContainer;
 import it.polimi.modaclouds.qos_models.schema.ResourceModelExtension;
 import it.polimi.modaclouds.qos_models.util.XMLHelper;
 import it.polimi.modaclouds.resourcemodel.cloud.CloudResource;
 import it.polimi.modaclouds.resourcemodel.cloud.Cost;
-import it.polimi.modaclouds.resourcemodel.cloud.Link;
 import it.polimi.modaclouds.resourcemodel.cloud.VirtualHWResource;
 import it.polimi.modaclouds.resourcemodel.cloud.VirtualHWResourceType;
+import it.polimi.tower4clouds.rules.MonitoringRules;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +36,11 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.eclipse.emf.common.util.EList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 public class AdaptationModelBuilder {
@@ -43,7 +49,6 @@ public class AdaptationModelBuilder {
 	
 	
 	private DataHandler dbHandler;
-	private GenericXMLHelper xmlHelp;
 
 	public AdaptationModelBuilder(String dbConnectionFile) {
 		try {
@@ -55,20 +60,40 @@ public class AdaptationModelBuilder {
 		}
 	}
 	
+	public static Functionality2Tier parseFunctionalityToTierFile(String functionalityToTierPath) throws Exception {
+		try {
+			JAXBContext jc = JAXBContext.newInstance(Functionality2Tier.class);
+			Unmarshaller unmarshaller = jc.createUnmarshaller();
+			File xml = ConfigManager.getPathToFile(functionalityToTierPath).toFile();
+			return (Functionality2Tier) unmarshaller.unmarshal(xml);
+		} catch (JAXBException e) {
+			throw new Exception("Error while loading the functionality2tier file.", e);
+		}
+	}
+	
+	public static Performance parsePerformancesFile(String space4cloudPerformancePath) throws Exception {
+		try {
+			JAXBContext jc = JAXBContext.newInstance(Performance.class);
+			Unmarshaller unmarshaller = jc.createUnmarshaller();
+			File xml = ConfigManager.getPathToFile(space4cloudPerformancePath).toFile();
+			return (Performance) unmarshaller.unmarshal(xml);
+		} catch (JAXBException e) {
+			throw new Exception("Error while loading the performances file.", e);
+		}
+	}
+	
 	public void createAdaptationModelAndRules(String basePath, String space4cloudSolutionPath, String functionalityToTierPath, 
-																String space4cloudPerformancePath, int optimizationWindowLenght, int timestepDuration, String suffix){
+																String space4cloudPerformancePath, int optimizationWindowLenght, int timestepDuration, String suffix) throws Exception {
 
 		logger.info("Reading the input files and preparing the results...");
 		
 		ObjectFactory factory= new ObjectFactory();
 		 	
+		List<it.polimi.modaclouds.adaptationDesignTime4Cloud.functionality2tier.Tier> tiersInFunctionalityToTier = parseFunctionalityToTierFile(functionalityToTierPath).getTier();
 		
-		xmlHelp= new GenericXMLHelper(functionalityToTierPath);
-		List<Element> mapping=xmlHelp.getElements("tier");
-		
-		xmlHelp= new GenericXMLHelper(space4cloudPerformancePath);
-		List<Element> performance=xmlHelp.getElements("Seff");
-		List<Element> tiersPerformance=xmlHelp.getElements("Tier");
+		Performance p = parsePerformancesFile(space4cloudPerformancePath);
+		List<Seff> performance = p.getSeffs().getSeff();
+		List<Tier> tiersPerformance = p.getTiers().getTier();
 		
 		MonitoringRulesHelper rulesHelper= new MonitoringRulesHelper();
 		
@@ -92,29 +117,29 @@ public class AdaptationModelBuilder {
 						tier.getCloudElement().getServiceName(), 
 						tier.getCloudElement().getResourceSizeID());
 				
-				for(Element t:tiersPerformance){
-					if(t.getAttribute("id").equals(tier.getId())){
-						newTier.setId(t.getAttribute("name"));
+				for (Tier t : tiersPerformance){
+					if (t.getId().equals(tier.getId())) {
+						newTier.setId(t.getName());
 					}
 				}
 				
 							
 					
-					for(Element e:mapping){
-						if(e.getAttribute("id").equals(tier.getId())){
-							List<Element> functionalities=xmlHelp.getElements(e, "functionality");
-							for(Element f : functionalities){
-								Functionality toAdd=factory.createFunctionality();
-								toAdd.setId(f.getAttribute("id"));
-								newTier.getFunctionality().add(toAdd);
-							}
+				for (it.polimi.modaclouds.adaptationDesignTime4Cloud.functionality2tier.Tier t : tiersInFunctionalityToTier) {
+					if (t.getId().equals(tier.getId())) {
+						List<it.polimi.modaclouds.adaptationDesignTime4Cloud.functionality2tier.Functionality> functionalities = t.getFunctionality();
+						for (it.polimi.modaclouds.adaptationDesignTime4Cloud.functionality2tier.Functionality f : functionalities) {
+							Functionality toAdd=factory.createFunctionality();
+							toAdd.setId(f.getId());
+							newTier.getFunctionality().add(toAdd);
 						}
 					}
+				}
 					
 				
 				
 				
-				this.setResponseTimeThresholds(performance, newTier, xmlHelp);
+				this.setResponseTimeThresholds(performance, newTier);
 						
 				boolean existingContainer=false;
 				Container toUpdate=null;
@@ -148,97 +173,108 @@ public class AdaptationModelBuilder {
 					
 			}
 			
+			createConfigFile(
+					model,
+					Paths.get(basePath, "S4COpsConfig" + suffix + ".xml"));
 			
-			
-			JAXBContext context = JAXBContext.newInstance("it.polimi.modaclouds.adaptationDesignTime4Cloud.model");
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
-			File config = Paths.get(basePath, "S4COpsConfig" + suffix + ".xml").toFile();
-            try (OutputStream out = new FileOutputStream( config )) {
-            	marshaller.marshal(model,out);
-            	logger.info("Config file {} created!", config.toString());
-            }
-			
-			context = JAXBContext.newInstance("it.polimi.tower4clouds.rules");
-		    marshaller=context.createMarshaller();
-			marshaller.setProperty("jaxb.formatted.output",Boolean.TRUE);
-			File rules = Paths.get(basePath, "lowerSLARules" + suffix + ".xml").toFile();
-			try (OutputStream out = new FileOutputStream(rules)) {
-				marshaller.marshal(rulesHelper.createResponseTimeThresholdRules(model, timestepDuration),out);
-				logger.info("Rules file {} created!", rules.toString());
-			}
+			createRulesFile(
+					rulesHelper.createResponseTimeThresholdRules(model, timestepDuration),
+					Paths.get(basePath, "lowerSLARules" + suffix + ".xml"));
 			
 		} catch ( JAXBException | SAXException | StaticInputBuildingException | IOException e) {
-			logger.error("Error while producing the results.", e);
+			throw new Exception("Error while producing the results.", e);
 		} 
 
 	}
 	
+	public static void createConfigFile(Containers containers, Path p) throws Exception {
+		try {
+			JAXBContext context = JAXBContext.newInstance("it.polimi.modaclouds.adaptationDesignTime4Cloud.model");
+			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty("jaxb.formatted.output", Boolean.TRUE);
+			File f = p.toFile();
+	        try (OutputStream out = new FileOutputStream(f)) {
+	        	marshaller.marshal(containers, out);
+	        	logger.info("Config file {} created!", f.toString());
+	        }
+		} catch (Exception e) {
+			throw new Exception("Error while writing the config file.", e);
+		}
+	}
 	
-	private void setResponseTimeThresholds( List<Element> performance, ApplicationTier newTier, GenericXMLHelper xmlHelp){
+	public static void createRulesFile(MonitoringRules rules, Path p) throws Exception {
+		try {
+			JAXBContext context = JAXBContext.newInstance("it.polimi.tower4clouds.rules");
+			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty("jaxb.formatted.output", Boolean.TRUE);
+			File f = p.toFile();
+	        try (OutputStream out = new FileOutputStream(f)) {
+	        	marshaller.marshal(rules, out);
+	        	logger.info("Rules file {} created!", f.toString());
+	        }
+		} catch (Exception e) {
+			throw new Exception("Error while writing the rules file.", e);
+		}
+	}
+	
+	private void setResponseTimeThresholds(List<Seff> performance, ApplicationTier newTier) {
+		List<float[]> sumWeigthedRT= new ArrayList<float[]>();
+		List<float[]> sumTHR=new ArrayList<float[]>();
 		
+		for(Seff e : performance){
+			for(Functionality f: newTier.getFunctionality()){
+				if(e.getId().equals(f.getId())){
+					float[] weigthedResponseTime=new float[24];
+					float[] throughput=new float[24];
+					
+					List<HourValueType> thr = e.getThroughput();
+					List<HourValueType> rt = e.getAvgRT();
 
-			
-			List<float[]> sumWeigthedRT= new ArrayList<float[]>();
-			List<float[]> sumTHR=new ArrayList<float[]>();
-			
-			for(Element e: performance){
-				for(Functionality f: newTier.getFunctionality()){
-					if(e.getAttribute("id").equals(f.getId())){
-						float[] weigthedResponseTime=new float[24];
-						float[] throughput=new float[24];
-						
-						List<Element> thr=xmlHelp.getElements(e, "throughput");
-						List<Element> rt=xmlHelp.getElements(e, "avgRT");
-
-						
-						for(Element t: thr){
-							throughput[Integer.parseInt(t.getAttribute("hour"))]=Float.parseFloat(t.getAttribute("value"));
-						}
-						
-						
-						for(Element r: rt){
-							weigthedResponseTime[Integer.parseInt(r.getAttribute("hour"))]=Float.parseFloat(r.getAttribute("value"));
-						}
-
-						for(int i=0; i<24; i++){
-							weigthedResponseTime[i]=weigthedResponseTime[i]*throughput[i];
-						}
-						
-						sumWeigthedRT.add(weigthedResponseTime);
-						sumTHR.add(throughput);
+					
+					for(HourValueType t: thr){
+						throughput[t.getHour()] = t.getValue();
+					}
+					
+					
+					for(HourValueType r: rt){
+						weigthedResponseTime[r.getHour()] = r.getValue();
 					}
 
+					for(int i=0; i<24; i++){
+						weigthedResponseTime[i]=weigthedResponseTime[i]*throughput[i];
+					}
+					
+					sumWeigthedRT.add(weigthedResponseTime);
+					sumTHR.add(throughput);
 				}
-			}
 
-			float[] thresholds=new float[24];
+			}
+		}
+
+		float[] thresholds=new float[24];
+		
+		for(int i=0; i<24 ; i++){
 			
-			for(int i=0; i<24 ; i++){
-				
-				float num=0;
-				
-				for(float[] temp: sumWeigthedRT){
-					num=num+temp[i];
-				}
-				
-				float den=0;
-				
-				for(float[] temp: sumTHR){
-					den=den+temp[i];
-				}
-				
-				thresholds[i]=num/den;
-				
-				ResponseTimeThreshold toAdd=new ResponseTimeThreshold();
-				toAdd.setHour(i);
-				toAdd.setValue(num/den);
-				newTier.getResponseTimeThreshold().add(toAdd);
-				
+			float num=0;
+			
+			for(float[] temp: sumWeigthedRT){
+				num=num+temp[i];
 			}
 			
-		
-		
+			float den=0;
+			
+			for(float[] temp: sumTHR){
+				den=den+temp[i];
+			}
+			
+			thresholds[i]=num/den;
+			
+			ResponseTimeThreshold toAdd=new ResponseTimeThreshold();
+			toAdd.setHour(i);
+			toAdd.setValue(num/den);
+			newTier.getResponseTimeThreshold().add(toAdd);
+			
+		}
 	}
 	
 	private float getResourceCapacity(CloudResource resource, double speedNorm) throws StaticInputBuildingException{
