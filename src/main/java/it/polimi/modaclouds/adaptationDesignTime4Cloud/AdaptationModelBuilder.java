@@ -1,21 +1,21 @@
-package it.polimi.modaclouds.adaptationDesignTime4Cloud.Main;
+package it.polimi.modaclouds.adaptationDesignTime4Cloud;
 
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.cloudDBAccess.DataHandler;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.exceptions.StaticInputBuildingException;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.functionality2tier.Functionality2Tier;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ApplicationTier;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Container;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Containers;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Functionality;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ObjectFactory;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ResponseTimeThreshold;
 import it.polimi.modaclouds.adaptationDesignTime4Cloud.util.ConfigManager;
+import it.polimi.modaclouds.qos_models.schema.ApplicationTier;
+import it.polimi.modaclouds.qos_models.schema.Container;
+import it.polimi.modaclouds.qos_models.schema.Containers;
+import it.polimi.modaclouds.qos_models.schema.Functionality;
 import it.polimi.modaclouds.qos_models.schema.HourValueType;
+import it.polimi.modaclouds.qos_models.schema.ObjectFactory;
 import it.polimi.modaclouds.qos_models.schema.Performance;
 import it.polimi.modaclouds.qos_models.schema.Performance.Seffs.Seff;
 import it.polimi.modaclouds.qos_models.schema.Performance.Tiers.Tier;
 import it.polimi.modaclouds.qos_models.schema.ResourceContainer;
 import it.polimi.modaclouds.qos_models.schema.ResourceModelExtension;
+import it.polimi.modaclouds.qos_models.schema.ResponseTimeThreshold;
 import it.polimi.modaclouds.qos_models.util.XMLHelper;
 import it.polimi.modaclouds.resourcemodel.cloud.CloudResource;
 import it.polimi.modaclouds.resourcemodel.cloud.Cost;
@@ -31,11 +31,12 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.eclipse.emf.common.util.EList;
@@ -82,9 +83,59 @@ public class AdaptationModelBuilder {
 		}
 	}
 	
-	public void createAdaptationModelAndRules(String basePath, String space4cloudSolutionPath, String functionalityToTierPath, 
+	public List<File> createAdaptationModelAndRules(String basePath, String functionalityToTierPath, 
+			int optimizationWindowLenght, int timestepDuration, String suffix) throws Exception {
+		return createAdaptationModelAndRules(basePath, null, functionalityToTierPath, null, optimizationWindowLenght, timestepDuration, suffix);
+	}
+	
+	public static final int DEFAULT_OPTIMIZATION_WINDOW_LENGTH = 5;
+	public static final int DEFAULT_TIMESTEP_DURATION = 5;
+	
+	public static final String SOLUTION_FILE_NAME = "solution%s.xml";
+	public static final String PERFORMANCE_FILE_NAME = "performance%s.xml";
+	public static final String FUNCTIONALITY2TIER_FILE_NAME = "functionalityChain2Tier.xml";
+	
+	public List<File> createAdaptationModelAndRules(String basePath, String space4cloudSolutionPath, String functionalityToTierPath, 
 																String space4cloudPerformancePath, int optimizationWindowLenght, int timestepDuration, String suffix) throws Exception {
-
+		{
+			if (basePath == null || basePath.trim().length() == 0)
+				throw new RuntimeException("The base path parameter is null or not valid!");
+			if (suffix == null || suffix.trim().length() == 0)
+				throw new RuntimeException("The suffix parameter is null or not valid!");
+			
+			File basePathFolder = ConfigManager.getPathToFile(basePath).toFile();
+			if (!basePathFolder.exists() || !basePathFolder.isDirectory())
+				throw new RuntimeException("The base path (" + basePath + ") doesn't refer to a correct folder.");
+			
+			if (space4cloudSolutionPath == null)
+				space4cloudSolutionPath = Paths.get(basePathFolder.toString(), String.format(SOLUTION_FILE_NAME, suffix)).toString();
+			
+			if (space4cloudPerformancePath == null)
+				space4cloudPerformancePath = Paths.get(basePathFolder.toString(), String.format(PERFORMANCE_FILE_NAME, suffix)).toString();
+			
+			if (functionalityToTierPath == null)
+				functionalityToTierPath = Paths.get(basePathFolder.getParent(), FUNCTIONALITY2TIER_FILE_NAME).toString();
+			
+			File f = new File(space4cloudPerformancePath);
+			if (!f.exists() && !f.isFile())
+				throw new RuntimeException("Performance file not found!");
+			
+			f = new File(space4cloudSolutionPath);
+			if (!f.exists() && !f.isFile())
+				throw new RuntimeException("Solution file not found!");
+			
+			f = new File(functionalityToTierPath);
+			if (!f.exists() && !f.isFile())
+				throw new RuntimeException("Functionality2Tier file not found!");
+			
+			if (optimizationWindowLenght < 0)
+				optimizationWindowLenght = DEFAULT_OPTIMIZATION_WINDOW_LENGTH;
+			
+			if (timestepDuration < 0)
+				timestepDuration = DEFAULT_TIMESTEP_DURATION;
+		}
+		
+		
 		logger.info("Reading the input files and preparing the results...");
 		
 		ObjectFactory factory= new ObjectFactory();
@@ -112,6 +163,7 @@ public class AdaptationModelBuilder {
 			for (ResourceContainer tier : solution.getResourceContainer()) {
 							
 				ApplicationTier newTier = factory.createApplicationTier();
+				Map<String, String> functionalityNameToId = new HashMap<String, String>();
 				
 				CloudResource resource=this.dbHandler.getCloudResource(tier.getProvider(), 
 						tier.getCloudElement().getServiceName(), 
@@ -130,7 +182,8 @@ public class AdaptationModelBuilder {
 						List<it.polimi.modaclouds.adaptationDesignTime4Cloud.functionality2tier.Functionality> functionalities = t.getFunctionality();
 						for (it.polimi.modaclouds.adaptationDesignTime4Cloud.functionality2tier.Functionality f : functionalities) {
 							Functionality toAdd=factory.createFunctionality();
-							toAdd.setId(f.getId());
+							toAdd.setId(f.getName());
+							functionalityNameToId.put(f.getName(), f.getId());
 							newTier.getFunctionality().add(toAdd);
 						}
 					}
@@ -139,7 +192,7 @@ public class AdaptationModelBuilder {
 				
 				
 				
-				this.setResponseTimeThresholds(performance, newTier);
+				this.setResponseTimeThresholds(performance, newTier, functionalityNameToId);
 						
 				boolean existingContainer=false;
 				Container toUpdate=null;
@@ -173,57 +226,56 @@ public class AdaptationModelBuilder {
 					
 			}
 			
-			createConfigFile(
+			List<File> res = new ArrayList<>();
+			
+			res.add(createConfigFile(
 					model,
-					Paths.get(basePath, "S4COpsConfig" + suffix + ".xml"));
+					Paths.get(basePath, "S4COpsConfig" + suffix + ".xml")));
 			
-			createRulesFile(
+			res.add(createRulesFile(
 					rulesHelper.createResponseTimeThresholdRules(model, timestepDuration),
-					Paths.get(basePath, "lowerSLARules" + suffix + ".xml"));
+					Paths.get(basePath, "lowerSLARules" + suffix + ".xml")));
 			
+			return res;
 		} catch ( JAXBException | SAXException | StaticInputBuildingException | IOException e) {
 			throw new Exception("Error while producing the results.", e);
 		} 
 
 	}
 	
-	public static void createConfigFile(Containers containers, Path p) throws Exception {
+	public static File createConfigFile(Containers containers, Path p) throws Exception {
 		try {
-			JAXBContext context = JAXBContext.newInstance("it.polimi.modaclouds.adaptationDesignTime4Cloud.model");
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty("jaxb.formatted.output", Boolean.TRUE);
 			File f = p.toFile();
 	        try (OutputStream out = new FileOutputStream(f)) {
-	        	marshaller.marshal(containers, out);
+	        	XMLHelper.serialize(containers, out);
 	        	logger.info("Config file {} created!", f.toString());
 	        }
+	        return f;
 		} catch (Exception e) {
 			throw new Exception("Error while writing the config file.", e);
 		}
 	}
 	
-	public static void createRulesFile(MonitoringRules rules, Path p) throws Exception {
+	public static File createRulesFile(MonitoringRules rules, Path p) throws Exception {
 		try {
-			JAXBContext context = JAXBContext.newInstance("it.polimi.tower4clouds.rules");
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty("jaxb.formatted.output", Boolean.TRUE);
 			File f = p.toFile();
 	        try (OutputStream out = new FileOutputStream(f)) {
-	        	marshaller.marshal(rules, out);
+	        	XMLHelper.serialize(rules, out);
 	        	logger.info("Rules file {} created!", f.toString());
 	        }
+	        return f;
 		} catch (Exception e) {
 			throw new Exception("Error while writing the rules file.", e);
 		}
 	}
 	
-	private void setResponseTimeThresholds(List<Seff> performance, ApplicationTier newTier) {
+	private void setResponseTimeThresholds(List<Seff> performance, ApplicationTier newTier, Map<String, String> functionalityNameToId) {
 		List<float[]> sumWeigthedRT= new ArrayList<float[]>();
 		List<float[]> sumTHR=new ArrayList<float[]>();
 		
 		for(Seff e : performance){
 			for(Functionality f: newTier.getFunctionality()){
-				if(e.getId().equals(f.getId())){
+				if(e.getId().equals(functionalityNameToId.get(f.getId()))) {
 					float[] weigthedResponseTime=new float[24];
 					float[] throughput=new float[24];
 					

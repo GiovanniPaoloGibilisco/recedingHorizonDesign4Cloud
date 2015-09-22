@@ -4,7 +4,7 @@
 
 	<groupId>it.polimi.modaclouds</groupId>
 	<artifactId>adaptationDesignTime4Cloud</artifactId>
-	<version>2.0</version>
+	<version>2.1</version>
 	<packaging>jar</packaging>
 
 	<name>adaptationDesignTime4Cloud</name>
@@ -57,7 +57,7 @@
 		<dependency>
 			<groupId>it.polimi.modaclouds.qos-models</groupId>
 			<artifactId>qos-models</artifactId>
-			<version>3.0.1</version>
+			<version>3.0.2</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>log4j-over-slf4j</artifactId>
@@ -110,6 +110,12 @@
 			<version>2.9.1-v20131212-0545</version>
 		</dependency>
 		<!-- end cloud DB access required dependencies -->
+		
+		<dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+            <version>1.48</version>
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -130,6 +136,39 @@
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>it.polimi.modaclouds.adaptationDesignTime4Cloud.Main</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
             
@@ -192,6 +231,29 @@
                             <goal>site</goal>
                         </goals>
                         <phase>deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>assembly-dist.xml</descriptor>
+                    </descriptors>
+                    <finalName>adaptationDesignToRuntime</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id><!-- make-assembly -->adaptationDesignToRuntime</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <!-- <configuration> <descriptors> <descriptor>assembly-dist.xml</descriptor>
+                            </descriptors> </configuration> -->
                     </execution>
                 </executions>
             </plugin>

@@ -21,7 +21,6 @@ package it.polimi.modaclouds.adaptationDesignTime4Cloud.cloudDBAccess;
 import it.polimi.modaclouds.resourcemodel.cloud.CloudFactory;
 import it.polimi.modaclouds.resourcemodel.cloud.CloudProvider;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -58,11 +57,6 @@ public class CloudProvidersDictionary {
 		/* dictionary creation */
 		Map<String, ProviderDBConnector> dict = new HashMap<>();
 
-		try {
-			DatabaseConnector.initConnection(null);
-		} catch (IOException e) {
-			logger.error("Error while initializing the connection.", e);
-		}
 		Connection db = DatabaseConnector.getConnection();
 		ResultSet rs = db.createStatement().executeQuery(
 				"select * from cloudprovider");

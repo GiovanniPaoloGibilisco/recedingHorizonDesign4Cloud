@@ -1,9 +1,9 @@
-package it.polimi.modaclouds.adaptationDesignTime4Cloud.Main;
+package it.polimi.modaclouds.adaptationDesignTime4Cloud;
 
 
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.ApplicationTier;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Container;
-import it.polimi.modaclouds.adaptationDesignTime4Cloud.model.Containers;
+import it.polimi.modaclouds.qos_models.schema.ApplicationTier;
+import it.polimi.modaclouds.qos_models.schema.Container;
+import it.polimi.modaclouds.qos_models.schema.Containers;
 import it.polimi.tower4clouds.rules.Action;
 import it.polimi.tower4clouds.rules.CollectedMetric;
 import it.polimi.tower4clouds.rules.Condition;

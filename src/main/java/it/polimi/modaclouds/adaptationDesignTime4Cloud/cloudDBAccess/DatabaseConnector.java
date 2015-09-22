@@ -67,10 +67,10 @@ public class DatabaseConnector {
 			password=properties.getProperty("PASSWORD");
 		}
 		logger.debug("Data base connection settings:");
-		logger.debug("\turl:"+url);
-		logger.debug("\tname:"+dbName);
-		logger.debug("\tuser:"+userName);
-		logger.debug("\tpass:"+password);
+		logger.debug("\turl:{}", url);
+		logger.debug("\tname:{}", dbName);
+		logger.debug("\tuser:{}", userName);
+		logger.debug("\tpass:{}", password);
 
 
 		try {
@@ -94,6 +94,14 @@ public class DatabaseConnector {
 	 * @throws SQLException 
 	 */
 	public static Connection getConnection(){
+		if (conn == null) {
+			try {
+				initConnection(null);
+			} catch (Exception e) {
+				logger.error("Error while initializing the connection.", e);
+			}
+		}
+		
 		return conn;
 	}
 }
