@@ -51,7 +51,6 @@ public class Main {
 
 	public static void main(String[] args) {
 //		args = "-shell".split(" ");
-		args = "-basePath /Users/ft/Desktop/tmp/trash/space4cloud/ -dbConnectionFile /Users/ft/Development/workspace-s4c-runtime/modaclouds-models/HTTPAgent/localDBConnection.properties -suffix Amazon -functionalityToTierPath /Users/ft/Development/workspace-s4c-runtime/modaclouds-models/HTTPAgent/functionalityChain2Tier.xml".split(" ");
 
 		Main m = new Main();
 		JCommander jc = new JCommander(m, args);

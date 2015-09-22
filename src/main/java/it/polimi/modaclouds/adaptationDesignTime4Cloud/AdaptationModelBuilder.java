@@ -35,9 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.eclipse.emf.common.util.EList;
 import org.slf4j.Logger;
@@ -63,22 +61,22 @@ public class AdaptationModelBuilder {
 	
 	public static Functionality2Tier parseFunctionalityToTierFile(String functionalityToTierPath) throws Exception {
 		try {
-			JAXBContext jc = JAXBContext.newInstance(Functionality2Tier.class);
-			Unmarshaller unmarshaller = jc.createUnmarshaller();
 			File xml = ConfigManager.getPathToFile(functionalityToTierPath).toFile();
-			return (Functionality2Tier) unmarshaller.unmarshal(xml);
-		} catch (JAXBException e) {
+			try (FileInputStream in = new FileInputStream(xml)) {
+				return (Functionality2Tier) XMLHelper.deserialize(in, Functionality2Tier.class);
+			}
+		} catch (Exception e) {
 			throw new Exception("Error while loading the functionality2tier file.", e);
 		}
 	}
 	
 	public static Performance parsePerformancesFile(String space4cloudPerformancePath) throws Exception {
 		try {
-			JAXBContext jc = JAXBContext.newInstance(Performance.class);
-			Unmarshaller unmarshaller = jc.createUnmarshaller();
 			File xml = ConfigManager.getPathToFile(space4cloudPerformancePath).toFile();
-			return (Performance) unmarshaller.unmarshal(xml);
-		} catch (JAXBException e) {
+			try (FileInputStream in = new FileInputStream(xml)) {
+				return (Performance) XMLHelper.deserialize(in, Performance.class);
+			}
+		} catch (Exception e) {
 			throw new Exception("Error while loading the performances file.", e);
 		}
 	}
