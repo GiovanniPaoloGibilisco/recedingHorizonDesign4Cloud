@@ -245,7 +245,9 @@ public class AdaptationModelBuilder {
 		try {
 			File f = p.toFile();
 	        try (OutputStream out = new FileOutputStream(f)) {
-	        	XMLHelper.serialize(containers, out);
+	        	final String schemaLocation = "http://www.modaclouds.eu/xsd/2015/9/s4c_ops https://raw.githubusercontent.com/deib-polimi/modaclouds-qos-models/master/metamodels/s4cextension/s4c_ops.xsd";
+	        	
+	        	XMLHelper.serialize(containers, out, schemaLocation);
 	        	logger.info("Config file {} created!", f.toString());
 	        }
 	        return f;
@@ -258,7 +260,9 @@ public class AdaptationModelBuilder {
 		try {
 			File f = p.toFile();
 	        try (OutputStream out = new FileOutputStream(f)) {
-	        	XMLHelper.serialize(rules, out);
+	        	final String schemaLocation = "http://www.modaclouds.eu/xsd/1.0/monitoring_rules_schema https://raw.githubusercontent.com/deib-polimi/tower4clouds/master/rules/metamodels/monitoring_rules_schema.xsd";
+	        	
+	        	XMLHelper.serialize(rules, out, schemaLocation);
 	        	logger.info("Rules file {} created!", f.toString());
 	        }
 	        return f;

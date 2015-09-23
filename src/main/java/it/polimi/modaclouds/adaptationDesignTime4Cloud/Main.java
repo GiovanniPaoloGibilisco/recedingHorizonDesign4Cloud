@@ -50,7 +50,7 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-//		args = "-shell".split(" ");
+//		args = "-basePath /Users/ft/Desktop/tmp/trash/space4cloud -suffix Amazon -dbConnectionFile /Users/ft/Development/workspace-s4c-runtime/modaclouds-models/HTTPAgent/localDBConnection.properties -functionalityToTierPath /Users/ft/Development/workspace-s4c-runtime/modaclouds-models/HTTPAgent/functionalityChain2Tier.xml".split(" ");
 
 		Main m = new Main();
 		JCommander jc = new JCommander(m, args);
