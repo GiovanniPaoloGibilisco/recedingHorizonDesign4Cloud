@@ -17,7 +17,7 @@ public class TestMain
     			"/home/micheleguerriero/workspace/modaclouds-DesignToRuntimeConnector/resources/solutionAmazon.xml",
     			"/home/micheleguerriero/workspace/modaclouds-DesignToRuntimeConnector/resources/functionalityChain2Tier.xml", 
     			"/home/micheleguerriero/workspace/modaclouds-DesignToRuntimeConnector/resources/performanceAmazon.xml",
-    			5, 5, "Amazon");
+    			5, 5, "Amazon", null);
     	
 
     }

@@ -1,5 +1,7 @@
 package it.polimi.modaclouds.adaptationDesignTime4Cloud;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -63,7 +65,7 @@ public class Main {
 		}
 		
 		try {
-			perform(m.dbConnectionFile, m.basePath, m.space4cloudSolutionPath, m.functionalityToTierPath, m.space4cloudPerformancePath, m.optimizationWindowLenght, m.timestepDuration, m.suffix);
+			perform(m.dbConnectionFile, m.basePath, m.space4cloudSolutionPath, m.functionalityToTierPath, m.space4cloudPerformancePath, m.optimizationWindowLenght, m.timestepDuration, m.suffix, null);
 			logger.info("Files produced correctly.");
 		} catch (Exception e) {
 			logger.error("Error while performing the conversion.", e);
@@ -72,10 +74,10 @@ public class Main {
 	}
 	
 	public static void perform(String dbConnectionFile, String basePath, String space4cloudSolutionPath, String functionalityToTierPath, 
-			String space4cloudPerformancePath, int optimizationWindowLenght, int timestepDuration, String suffix) throws Exception {
+			String space4cloudPerformancePath, int optimizationWindowLenght, int timestepDuration, String suffix,  Map<String, Double> functionalityDemands) throws Exception {
 		AdaptationModelBuilder amb = new AdaptationModelBuilder(dbConnectionFile);
 		
-		amb.createAdaptationModelAndRules(basePath, space4cloudSolutionPath, functionalityToTierPath, space4cloudPerformancePath, optimizationWindowLenght, timestepDuration, suffix);
+		amb.createAdaptationModelAndRules(basePath, space4cloudSolutionPath, functionalityToTierPath, space4cloudPerformancePath, optimizationWindowLenght, timestepDuration, suffix, functionalityDemands);
 	}
 
 }

@@ -82,8 +82,8 @@ public class AdaptationModelBuilder {
 	}
 	
 	public List<File> createAdaptationModelAndRules(String basePath, String functionalityToTierPath, 
-			int optimizationWindowLenght, int timestepDuration, String suffix) throws Exception {
-		return createAdaptationModelAndRules(basePath, null, functionalityToTierPath, null, optimizationWindowLenght, timestepDuration, suffix);
+			int optimizationWindowLenght, int timestepDuration, String suffix, Map<String, Double> functionalityDemands) throws Exception {
+		return createAdaptationModelAndRules(basePath, null, functionalityToTierPath, null, optimizationWindowLenght, timestepDuration, suffix, functionalityDemands);
 	}
 	
 	public static final int DEFAULT_OPTIMIZATION_WINDOW_LENGTH = 5;
@@ -94,7 +94,7 @@ public class AdaptationModelBuilder {
 	public static final String FUNCTIONALITY2TIER_FILE_NAME = "functionalityChain2Tier.xml";
 	
 	public List<File> createAdaptationModelAndRules(String basePath, String space4cloudSolutionPath, String functionalityToTierPath, 
-																String space4cloudPerformancePath, int optimizationWindowLenght, int timestepDuration, String suffix) throws Exception {
+																String space4cloudPerformancePath, int optimizationWindowLenght, int timestepDuration, String suffix, Map<String, Double> functionalityDemands) throws Exception {
 		{
 			if (basePath == null || basePath.trim().length() == 0)
 				throw new RuntimeException("The base path parameter is null or not valid!");
@@ -181,6 +181,7 @@ public class AdaptationModelBuilder {
 						for (it.polimi.modaclouds.adaptationDesignTime4Cloud.functionality2tier.Functionality f : functionalities) {
 							Functionality toAdd=factory.createFunctionality();
 							toAdd.setId(f.getName());
+							toAdd.setDemand(functionalityDemands.get(f.getId()));
 							functionalityNameToId.put(f.getName(), f.getId());
 							newTier.getFunctionality().add(toAdd);
 						}
