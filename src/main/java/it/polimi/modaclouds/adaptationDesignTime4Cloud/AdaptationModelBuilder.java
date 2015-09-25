@@ -181,7 +181,13 @@ public class AdaptationModelBuilder {
 						for (it.polimi.modaclouds.adaptationDesignTime4Cloud.functionality2tier.Functionality f : functionalities) {
 							Functionality toAdd=factory.createFunctionality();
 							toAdd.setId(f.getName());
-							toAdd.setDemand(functionalityDemands.get(f.getId()));
+							
+							Double demand = functionalityDemands.get(f.getId());
+							if (demand == null)
+								toAdd.setDemand(0.0);
+							else
+								toAdd.setDemand(demand/1000);
+							
 							functionalityNameToId.put(f.getName(), f.getId());
 							newTier.getFunctionality().add(toAdd);
 						}
