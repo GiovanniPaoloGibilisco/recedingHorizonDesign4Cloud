@@ -186,7 +186,7 @@ public class AdaptationModelBuilder {
 							if (demand == null)
 								toAdd.setDemand(0.0);
 							else
-								toAdd.setDemand(demand/1000);
+								toAdd.setDemand(demand*1000);
 							
 							functionalityNameToId.put(f.getName(), f.getId());
 							newTier.getFunctionality().add(toAdd);
@@ -328,11 +328,11 @@ public class AdaptationModelBuilder {
 				den=den+temp[i];
 			}
 			
-			thresholds[i]=num/den*1000;
+			thresholds[i]=(num/den)*1000;
 			
 			ResponseTimeThreshold toAdd=new ResponseTimeThreshold();
 			toAdd.setHour(i);
-			toAdd.setValue(num/den);
+			toAdd.setValue((num/den)*1000);
 			newTier.getResponseTimeThreshold().add(toAdd);
 			
 		}
