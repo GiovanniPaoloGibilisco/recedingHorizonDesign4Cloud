@@ -131,6 +131,9 @@ public class AdaptationModelBuilder {
 			
 			if (timestepDuration < 0)
 				timestepDuration = DEFAULT_TIMESTEP_DURATION;
+			
+			if (functionalityDemands == null)
+				functionalityDemands = new HashMap<String, Double>();
 		}
 		
 		
