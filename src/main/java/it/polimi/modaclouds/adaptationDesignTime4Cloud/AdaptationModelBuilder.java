@@ -186,7 +186,7 @@ public class AdaptationModelBuilder {
 							if (demand == null)
 								toAdd.setDemand(0.0);
 							else
-								toAdd.setDemand(demand*1000);
+								toAdd.setDemand(demand);
 							
 							functionalityNameToId.put(f.getName(), f.getId());
 							newTier.getFunctionality().add(toAdd);
