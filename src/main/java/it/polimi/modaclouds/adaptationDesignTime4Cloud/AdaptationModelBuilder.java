@@ -328,7 +328,7 @@ public class AdaptationModelBuilder {
 				den=den+temp[i];
 			}
 			
-			thresholds[i]=num/den;
+			thresholds[i]=num/den*1000;
 			
 			ResponseTimeThreshold toAdd=new ResponseTimeThreshold();
 			toAdd.setHour(i);
